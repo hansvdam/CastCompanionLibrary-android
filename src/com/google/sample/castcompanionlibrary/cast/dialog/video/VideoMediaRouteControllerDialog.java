@@ -30,6 +30,18 @@ import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDi
 import com.google.sample.castcompanionlibrary.utils.FetchBitmapTask;
 import com.google.sample.castcompanionlibrary.utils.LogUtils;
 
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
+import com.google.sample.castcompanionlibrary.R;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
+import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.sample.castcompanionlibrary.cast.exceptions.CastException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
+import com.google.sample.castcompanionlibrary.utils.FetchBitmapTask;
+import com.google.sample.castcompanionlibrary.utils.LogUtils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -54,6 +66,8 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
 
     private ImageView mIcon;
     private ImageView mPausePlay;
+    private ImageView mSkipRewind;
+    private ImageView mSkipForward;
     private TextView mTitle;
     private TextView mSubTitle;
     private TextView mEmptyText;
@@ -65,12 +79,15 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
     private Drawable mPauseDrawable;
     private Drawable mPlayDrawable;
     private Drawable mStopDrawable;
+
     private Context mContext;
     private View mIconContainer;
     private View mTextContainer;
+    private View mControlsContainer;
 
     private int mStreamType;
     private FetchBitmapTask mFetchBitmap;
+
 
     public VideoMediaRouteControllerDialog(Context context, int theme) {
         super(context, theme);
@@ -117,9 +134,9 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
 
             };
             mCastManager.addVideoCastConsumer(castConsumerImpl);
-            mPauseDrawable = context.getResources().getDrawable(R.drawable.ic_av_pause_sm_dark);
-            mPlayDrawable = context.getResources().getDrawable(R.drawable.ic_av_play_sm_dark);
-            mStopDrawable = context.getResources().getDrawable(R.drawable.ic_av_stop_sm_dark);
+            mPauseDrawable = context.getResources().getDrawable(R.drawable.chromecast_pause_dark);
+            mPlayDrawable = context.getResources().getDrawable(R.drawable.chromecast_play_dark);
+            mStopDrawable = context.getResources().getDrawable(R.drawable.chromecast_pause_dark);
         } catch (CastException e) {
             LOGE(TAG, "Failed to update the content of dialog", e);
         } catch (IllegalStateException e) {
@@ -135,6 +152,7 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
         mIcon.setVisibility(visibility);
         mIconContainer.setVisibility(visibility);
         mTextContainer.setVisibility(visibility);
+        mControlsContainer.setVisibility(visibility);
         mEmptyText.setText(resId == 0 ? R.string.no_media_info : resId);
         mEmptyText.setVisibility(hide ? View.VISIBLE : View.GONE);
         if (hide) mPausePlay.setVisibility(visibility);
@@ -313,6 +331,48 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
             }
         });
 
+        mSkipForward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null == mCastManager) {
+                    return;
+                }
+                try {
+                    long new_pos = mCastManager.getCurrentMediaPosition() + 30*1000;
+                    if (new_pos <= mCastManager.getMediaDuration() ) {
+                        mCastManager.seek((int) new_pos);
+                    }
+                } catch (TransientNetworkDisconnectionException e) {
+                    e.printStackTrace();
+                } catch (NoConnectionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        });
+
+        mSkipRewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null == mCastManager) {
+                    return;
+                }
+                try {
+                    long new_pos = mCastManager.getCurrentMediaPosition() - 30*1000;
+                    if (new_pos >= 0 ) {
+                        mCastManager.seek((int) new_pos);
+                    }
+                } catch (TransientNetworkDisconnectionException e) {
+                    e.printStackTrace();
+                } catch (NoConnectionException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        });
+
         mIcon.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -350,7 +410,10 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
         mIcon = (ImageView) controls.findViewById(R.id.iconView);
         mIconContainer = controls.findViewById(R.id.iconContainer);
         mTextContainer = controls.findViewById(R.id.textContainer);
+        mControlsContainer = controls.findViewById(R.id.cast_dialog_controls_container);
         mPausePlay = (ImageView) controls.findViewById(R.id.playPauseView);
+        mSkipForward = (ImageView) controls.findViewById(R.id.playForwardView);
+        mSkipRewind = (ImageView) controls.findViewById(R.id.playRewindView);
         mTitle = (TextView) controls.findViewById(R.id.titleView);
         mSubTitle = (TextView) controls.findViewById(R.id.subTitleView);
         mLoading = (ProgressBar) controls.findViewById(R.id.loadingView);

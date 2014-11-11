@@ -27,4 +27,14 @@
         <item name="android:textColor">@color/mr_custom_title</item>
     </style>
 
+    <style name="CastDialogTitle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/mr_notification_title_dark</item>
+    </style>
+
+    <style name="CastDialogSubTitle">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/mr_notification_subtitle_dark</item>
+    </style>
+
 </resources>

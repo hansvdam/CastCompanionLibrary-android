@@ -15,4 +15,11 @@
     <color name="mr_custom_line_2">#AAFFFFFF</color>
     <color name="mr_custom_title">#33b5e5</color>
 
+    <color name="mr_notification_title">#2d2d2d</color>
+    <color name="mr_notification_subtitle">#4D4D4D</color>
+
+    <color name="mr_notification_title_dark">#dddddd</color>
+    <color name="mr_notification_subtitle_dark">#bdbdbd</color>
+    <color name="cast_dialog_background">#282828</color>
+
 </resources>
