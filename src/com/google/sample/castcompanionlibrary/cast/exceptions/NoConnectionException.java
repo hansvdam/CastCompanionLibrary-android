@@ -17,9 +17,10 @@
 package com.google.sample.castcompanionlibrary.cast.exceptions;
 
 /**
- * Is used to indicate that the connectivity to the cast device is not there. User needs to take
- * manual steps to fix this issue.
+ * Is used to indicate that the connectivity to the cast device is not there. User needs to take manual steps to fix
+ * this issue.
  */
 @SuppressWarnings("serial")
 public class NoConnectionException extends Exception {
+
 }

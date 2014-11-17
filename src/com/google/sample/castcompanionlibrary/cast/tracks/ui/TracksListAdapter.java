@@ -86,17 +86,17 @@ public class TracksListAdapter extends ArrayAdapter<MediaTrack>
         notifyDataSetChanged();
     }
 
-    private class Holder {
-
-        private TextView label;
-        private RadioButton radio;
-    }
-
     public MediaTrack getSelectedTrack() {
         if (mSelectedPosition >= 0) {
             return mTracks.get(mSelectedPosition);
         }
         return null;
+    }
+
+    private class Holder {
+
+        private TextView label;
+        private RadioButton radio;
     }
 
 }

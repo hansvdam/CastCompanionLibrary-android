@@ -71,23 +71,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * An abstract class that manages connectivity to a cast device. Subclasses are expected to extend
- * the functionality of this class based on their purpose.
+ * An abstract class that manages connectivity to a cast device. Subclasses are expected to extend the functionality of
+ * this class based on their purpose.
  */
 public abstract class BaseCastManager implements DeviceSelectionListener, ConnectionCallbacks,
         OnConnectionFailedListener, OnFailedListener {
 
-    /**
-     * Enumerates various stages during a session recovery
-     */
-    public static enum ReconnectionStatus {
-        STARTED, IN_PROGRESS, FINALIZE, INACTIVE
-    }
-
     public static final int RECONNECTION_STARTED = 1;
     public static final int RECONNECTION_SUCCESSFUL = 2;
     public static final int RECONNECTION_FAILED = 3;
-
     public static final int FEATURE_DEBUGGING = 1;
     public static final int FEATURE_LOCKSCREEN = 2;
     public static final int FEATURE_NOTIFICATION = 4;
@@ -106,24 +98,23 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     public static final int CLEAR_WIFI = 2;
     public static final int CLEAR_SESSION = 4;
     public static final int CLEAR_MEDIA_END = 8;
-
     public static final int NO_STATUS_CODE = -1;
-
-    private static String CCL_VERSION;
-
     private static final String TAG = LogUtils.makeLogTag(BaseCastManager.class);
     private static final int SESSION_RECOVERY_TIMEOUT = 10; // in seconds
-
+    private static final int WHAT_UI_VISIBLE = 0;
+    private static final int WHAT_UI_HIDDEN = 1;
+    private static final int UI_VISIBILITY_DELAY_MS = 300;
+    protected static BaseCastManager mCastManager;
+    private static String CCL_VERSION;
+    private final Set<IBaseCastConsumer> mBaseCastConsumers = Collections
+            .synchronizedSet(new HashSet<IBaseCastConsumer>());
+    private final Handler mUiVisibilityHandler;
     protected Context mContext;
     protected MediaRouter mMediaRouter;
-    private RouteInfo mRouteInfo;
     protected MediaRouteSelector mMediaRouteSelector;
     protected CastMediaRouterCallback mMediaRouterCallback;
     protected CastDevice mSelectedCastDevice;
     protected String mDeviceName;
-    private final Set<IBaseCastConsumer> mBaseCastConsumers = Collections
-            .synchronizedSet(new HashSet<IBaseCastConsumer>());
-    private boolean mDestroyOnDisconnect = false;
     protected String mApplicationId;
     protected Handler mHandler;
     protected ReconnectionStatus mReconnectionStatus = ReconnectionStatus.INACTIVE;
@@ -133,56 +124,9 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     protected AsyncTask<Void, Integer, Integer> mReconnectionTask;
     protected int mCapabilities;
     protected boolean mConnectionSuspended;
-    protected static BaseCastManager mCastManager;
     protected String mSessionId;
-    private static final int WHAT_UI_VISIBLE = 0;
-    private static final int WHAT_UI_HIDDEN = 1;
-    private static final int UI_VISIBILITY_DELAY_MS = 300;
-    private final Handler mUiVisibilityHandler;
-
-    /*************************************************************************/
-    /************** Abstract Methods *****************************************/
-    /*************************************************************************/
-
-    /**
-     * A chance for the subclasses to perform what needs to be done when a route is unselected.
-     * Most of the logic is handled by the {@link BaseCastManager} but each subclass may have some
-     * additional logic that can be done, e.g. detaching data or media channels that they may have
-     * set up.
-     */
-    abstract protected void onDeviceUnselected();
-
-    /**
-     * Since application lifecycle callbacks are managed by subclasses, this abstract method needs
-     * to be implemented by each subclass independently.
-     */
-    abstract protected Cast.CastOptions.Builder getCastOptionBuilder(CastDevice device);
-
-    /**
-     * Subclasses can decide how the Cast Controller Dialog should be built. If this returns
-     * <code>null</code>, the default dialog will be shown.
-     */
-    abstract protected MediaRouteDialogFactory getMediaRouteDialogFactory();
-
-    /**
-     * Subclasses should implement this to react appropriately to the successful launch of their
-     * application. This is called when the application is successfully launched.
-     */
-    abstract protected void onApplicationConnected(ApplicationMetadata applicationMetadata,
-            String applicationStatus, String sessionId, boolean wasLaunched);
-
-    /**
-     * Called when the launch of application has failed. Subclasses need to handle this by doing
-     * appropriate clean up.
-     */
-    abstract protected void onApplicationConnectionFailed(int statusCode);
-
-    /**
-     * Called when the attempt to stop application has failed.
-     */
-    abstract protected void onApplicationStopFailed(int statusCode);
-
-     /* ********************************************************************/
+    private RouteInfo mRouteInfo;
+    private boolean mDestroyOnDisconnect = false;
 
     protected BaseCastManager(Context context, String applicationId) {
         CCL_VERSION = context.getString(R.string.ccl_version);
@@ -203,13 +147,81 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
 
+    /*************************************************************************/
+    /************** Abstract Methods *****************************************/
+    /**
+     * *********************************************************************
+     */
+
     public static BaseCastManager getCastManager() {
         return mCastManager;
     }
 
     /**
-     * Sets the {@link Context} for the subsequent calls. Setting context can help the library to
-     * show error messages to the user.
+     * A utility method to validate that the appropriate version of the Google Play Services is available on the device.
+     * If not, it will open a dialog to address the issue. The dialog displays a localized message about the error and
+     * upon user confirmation (by tapping on dialog) will direct them to the Play Store if Google Play services is out
+     * of date or missing, or to system settings if Google Play services is disabled on the device.
+     */
+    public static boolean checkGooglePlayServices(final Activity activity) {
+        return Utils.checkGooglePlayServices(activity);
+    }
+
+    /**
+     * @deprecated Use <code>checkGooglePlayServices</code>
+     */
+    public static boolean checkGooglePlaySevices(final Activity activity) {
+        return checkGooglePlayServices(activity);
+    }
+
+    /**
+     * Returns the version of this library.
+     */
+    public final static String getCclVersion() {
+        return CCL_VERSION;
+    }
+
+    /**
+     * A chance for the subclasses to perform what needs to be done when a route is unselected. Most of the logic is
+     * handled by the {@link BaseCastManager} but each subclass may have some additional logic that can be done, e.g.
+     * detaching data or media channels that they may have set up.
+     */
+    abstract protected void onDeviceUnselected();
+
+    /**
+     * Since application lifecycle callbacks are managed by subclasses, this abstract method needs to be implemented by
+     * each subclass independently.
+     */
+    abstract protected Cast.CastOptions.Builder getCastOptionBuilder(CastDevice device);
+
+     /* ********************************************************************/
+
+    /**
+     * Subclasses can decide how the Cast Controller Dialog should be built. If this returns <code>null</code>, the
+     * default dialog will be shown.
+     */
+    abstract protected MediaRouteDialogFactory getMediaRouteDialogFactory();
+
+    /**
+     * Subclasses should implement this to react appropriately to the successful launch of their application. This is
+     * called when the application is successfully launched.
+     */
+    abstract protected void onApplicationConnected(ApplicationMetadata applicationMetadata,
+            String applicationStatus, String sessionId, boolean wasLaunched);
+
+    /**
+     * Called when the launch of application has failed. Subclasses need to handle this by doing appropriate clean up.
+     */
+    abstract protected void onApplicationConnectionFailed(int statusCode);
+
+    /**
+     * Called when the attempt to stop application has failed.
+     */
+    abstract protected void onApplicationStopFailed(int statusCode);
+
+    /**
+     * Sets the {@link Context} for the subsequent calls. Setting context can help the library to show error messages to
+     * the user.
      */
     public void setContext(Context context) {
         mContext = context;
@@ -234,9 +246,8 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * This is called from {@link com.google.sample.castcompanionlibrary.cast
-     * .CastMediaRouterCallback}
-     * to signal the change in presence of cast devices on network.
+     * This is called from {@link com.google.sample.castcompanionlibrary.cast .CastMediaRouterCallback} to signal the
+     * change in presence of cast devices on network.
      */
     public void onCastAvailabilityChanged(boolean castPresent) {
         synchronized (mBaseCastConsumers) {
@@ -253,12 +264,12 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     /**
      * Disconnects from the connected device.
      *
-     * @param stopAppOnExit If {@code true}, the application running on the cast device will be
-     * stopped when disconnected.
-     * @param clearPersistedConnectionData If {@code true}, the persisted connection information
-     * will be cleared as part of this call.
-     * @param setDefaultRoute If {@code true}, after disconnection, the selected route will be set
-     * to the Default Route.
+     * @param stopAppOnExit                If {@code true}, the application running on the cast device will be stopped
+     *                                     when disconnected.
+     * @param clearPersistedConnectionData If {@code true}, the persisted connection information will be cleared as part
+     *                                     of this call.
+     * @param setDefaultRoute              If {@code true}, after disconnection, the selected route will be set to the
+     *                                     Default Route.
      */
     public void disconnectDevice(boolean stopAppOnExit, boolean clearPersistedConnectionData,
             boolean setDefaultRoute) {
@@ -334,13 +345,15 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
         }
     }
 
+    /*************************************************************************/
+    /************** UI Visibility Management *********************************/
+    /*************************************************************************/
+
     /**
-     * Adds and wires up the Media Router cast button. It returns a pointer to the Media Router
-     * menu item if the caller needs such reference. It is assumed that the enclosing
-     * {@link android.app.Activity} inherits (directly or indirectly) from
-     * {@link android.support.v7.app.ActionBarActivity}.
+     * Adds and wires up the Media Router cast button. It returns a pointer to the Media Router menu item if the caller
+     * needs such reference. It is assumed that the enclosing {@link android.app.Activity} inherits (directly or
+     * indirectly) from {@link android.support.v7.app.ActionBarActivity}.
      *
-     * @param menu
      * @param menuResourceId The resource id of the cast button in the xml menu descriptor file
      */
     public MenuItem addMediaRouterButton(Menu menu, int menuResourceId) {
@@ -355,18 +368,13 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Adds and wires up the {@link android.support.v7.app.MediaRouteButton} instance that is
-     * passed as an argument. This requires that
-     * <ul>
-     * <li>The enclosing {@link android.app.Activity} inherits (directly or indirectly) from
-     * {@link android.support.v4.app.FragmentActivity}</li>
-     * <li>User adds the {@link android.support.v7.app.MediaRouteButton} to the layout and
-     * pass a reference to that instance to this method</li>
-     * <li>User is in charge of controlling the visibility of this button. However, this
-     * library makes it easier to do so: use the callback
-     * <code>onCastAvailabilityChanged(boolean)</code> to change the visibility of the button in
-     * your client. For example, extend
-     * {@link com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl}
+     * Adds and wires up the {@link android.support.v7.app.MediaRouteButton} instance that is passed as an argument.
+     * This requires that <ul> <li>The enclosing {@link android.app.Activity} inherits (directly or indirectly) from
+     * {@link android.support.v4.app.FragmentActivity}</li> <li>User adds the {@link
+     * android.support.v7.app.MediaRouteButton} to the layout and pass a reference to that instance to this method</li>
+     * <li>User is in charge of controlling the visibility of this button. However, this library makes it easier to do
+     * so: use the callback <code>onCastAvailabilityChanged(boolean)</code> to change the visibility of the button in
+     * your client. For example, extend {@link com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl}
      * and override that method:
      * <pre>
      * {@code
@@ -375,8 +383,7 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
      * }
      * }
      *     </pre>
-     * </li>
-     * </ul>
+     * </li> </ul>
      */
     public MediaRouteButton addMediaRouterButton(MediaRouteButton button) {
         button.setRouteSelector(mMediaRouteSelector);
@@ -386,15 +393,10 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
         return button;
     }
 
-    /*************************************************************************/
-    /************** UI Visibility Management *********************************/
-    /*************************************************************************/
-
     /**
-     * Calling this method signals the library that an activity page is made visible. In common
-     * cases, this should be called in the "onResume()" method of each activity of the application.
-     * The library keeps a counter and when at least one page of the application becomes visible,
-     * the {@link onUiVisibilityChanged()} method is called.
+     * Calling this method signals the library that an activity page is made visible. In common cases, this should be
+     * called in the "onResume()" method of each activity of the application. The library keeps a counter and when at
+     * least one page of the application becomes visible, the {@link onUiVisibilityChanged()} method is called.
      */
     public synchronized void incrementUiCounter() {
         mVisibilityCounter++;
@@ -411,10 +413,9 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Calling this method signals the library that an activity page is made invisible. In common
-     * cases, this should be called in the "onPause()" method of each activity of the application.
-     * The library keeps a counter and when all pages of the application become invisible, the
-     * {@link onUiVisibilityChanged()} method is called.
+     * Calling this method signals the library that an activity page is made invisible. In common cases, this should be
+     * called in the "onPause()" method of each activity of the application. The library keeps a counter and when all
+     * pages of the application become invisible, the {@link onUiVisibilityChanged()} method is called.
      */
     public synchronized void decrementUiCounter() {
         if (--mVisibilityCounter == 0) {
@@ -459,6 +460,12 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
         }
     }
 
+    /*************************************************************************/
+    /************** Utility Methods ******************************************/
+    /**
+     * *********************************************************************
+     */
+
     public final void startCastDiscovery() {
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
@@ -466,28 +473,6 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
 
     public final void stopCastDiscovery() {
         mMediaRouter.removeCallback(mMediaRouterCallback);
-    }
-
-    /*************************************************************************/
-    /************** Utility Methods ******************************************/
-    /*************************************************************************/
-
-    /**
-     * A utility method to validate that the appropriate version of the Google Play Services is
-     * available on the device. If not, it will open a dialog to address the issue. The dialog
-     * displays a localized message about the error and upon user confirmation (by tapping on
-     * dialog) will direct them to the Play Store if Google Play services is out of date or
-     * missing, or to system settings if Google Play services is disabled on the device.
-     */
-    public static boolean checkGooglePlayServices(final Activity activity) {
-        return Utils.checkGooglePlayServices(activity);
-    }
-
-    /**
-     * @deprecated Use <code>checkGooglePlayServices</code>
-     */
-    public static boolean checkGooglePlaySevices(final Activity activity) {
-        return checkGooglePlayServices(activity);
     }
 
     /**
@@ -514,17 +499,16 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Returns the assigned human-readable name of the device, or <code>null</code> if no device is
-     * connected.
+     * Returns the assigned human-readable name of the device, or <code>null</code> if no device is connected.
      */
     public final String getDeviceName() {
         return mDeviceName;
     }
 
     /**
-     * Sets a flag to control whether disconnection form a cast device should result in stopping
-     * the running application or not. If <code>true</code> is passed, then application will be
-     * stopped. Default behavior is not to stop the app.
+     * Sets a flag to control whether disconnection form a cast device should result in stopping the running application
+     * or not. If <code>true</code> is passed, then application will be stopped. Default behavior is not to stop the
+     * app.
      */
     public final void setStopOnDisconnect(boolean stopOnExit) {
         mDestroyOnDisconnect = stopOnExit;
@@ -538,34 +522,26 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Returns the {@link android.support.v7.media.MediaRouter.RouteInfo} corresponding to the
-     * selected route.
+     * Returns the {@link android.support.v7.media.MediaRouter.RouteInfo} corresponding to the selected route.
      */
     public final RouteInfo getRouteInfo() {
         return mRouteInfo;
     }
 
     /**
-     * Sets the {@link android.support.v7.media.MediaRouter.RouteInfo} corresponding to the
-     * selected route.
+     * Sets the {@link android.support.v7.media.MediaRouter.RouteInfo} corresponding to the selected route.
      */
     public final void setRouteInfo(RouteInfo routeInfo) {
         mRouteInfo = routeInfo;
     }
 
     /**
-     * Turns on configurable features in the library. All the supported features are turned off by
-     * default and clients, prior to using them, need to turn them on; it is best to do is
-     * immediately after initialization of the library. Bitwise OR combination of features should
-     * be passed in if multiple features are needed
-     * <p/>
-     * Current set of configurable features are:
-     * <ul>
-     * <li>FEATURE_DEBUGGING : turns on debugging in Google Play services
-     * <li>FEATURE_NOTIFICATION : turns notifications on
-     * <li>FEATURE_LOCKSCREEN : turns on Lock Screen using {@link RemoteControlClient} in supported
-     * versions (JB+)
-     * </ul>
+     * Turns on configurable features in the library. All the supported features are turned off by default and clients,
+     * prior to using them, need to turn them on; it is best to do is immediately after initialization of the library.
+     * Bitwise OR combination of features should be passed in if multiple features are needed <p/> Current set of
+     * configurable features are: <ul> <li>FEATURE_DEBUGGING : turns on debugging in Google Play services
+     * <li>FEATURE_NOTIFICATION : turns notifications on <li>FEATURE_LOCKSCREEN : turns on Lock Screen using {@link
+     * RemoteControlClient} in supported versions (JB+) </ul>
      */
     public final void enableFeatures(int capabilities) {
         mCapabilities = capabilities;
@@ -586,12 +562,18 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
+     * Gets the remote's system volume, a number between 0 and 1, inclusive.
+     */
+    public final double getDeviceVolume() throws TransientNetworkDisconnectionException,
+            NoConnectionException {
+        checkConnectivity();
+        return Cast.CastApi.getVolume(mApiClient);
+    }
+
+    /**
      * Sets the device (system) volume.
      *
      * @param volume Should be a value between 0 and 1, inclusive.
-     * @throws CastException
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
      */
     public void setDeviceVolume(double volume) throws CastException,
             TransientNetworkDisconnectionException, NoConnectionException {
@@ -605,23 +587,7 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Gets the remote's system volume, a number between 0 and 1, inclusive.
-     *
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
-     */
-    public final double getDeviceVolume() throws TransientNetworkDisconnectionException,
-            NoConnectionException {
-        checkConnectivity();
-        return Cast.CastApi.getVolume(mApiClient);
-    }
-
-    /**
      * Increments (or decrements) the device volume by the given amount.
-     *
-     * @throws CastException
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
      */
     public void incrementDeviceVolume(double delta) throws CastException,
             TransientNetworkDisconnectionException, NoConnectionException {
@@ -633,11 +599,8 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Returns <code>true</code> if remote device is muted. It internally determines if this should
-     * be done for <code>stream</code> or <code>device</code> volume.
-     *
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
+     * Returns <code>true</code> if remote device is muted. It internally determines if this should be done for
+     * <code>stream</code> or <code>device</code> volume.
      */
     public final boolean isDeviceMute() throws TransientNetworkDisconnectionException,
             NoConnectionException {
@@ -647,10 +610,6 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
 
     /**
      * Mutes or un-mutes the device volume.
-     *
-     * @throws CastException
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
      */
     public void setDeviceMute(boolean mute) throws CastException,
             TransientNetworkDisconnectionException, NoConnectionException {
@@ -664,17 +623,16 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Clears the {@link android.content.Context}. Should be used when the client application is
-     * being destroyed to avoid context leak.
+     * Clears the {@link android.content.Context}. Should be used when the client application is being destroyed to
+     * avoid context leak.
      */
     public void clearContext() {
         this.mContext = null;
     }
 
     /**
-     * Clears the {@link android.content.Context} if the current context is the same as the one
-     * provided in the argument <code>context</code>. Should be used when the client application
-     * is being destroyed to avoid context leak.
+     * Clears the {@link android.content.Context} if the current context is the same as the one provided in the argument
+     * <code>context</code>. Should be used when the client application is being destroyed to avoid context leak.
      */
     public void clearContext(Context context) {
         if (null != this.mContext && this.mContext == context) {
@@ -716,20 +674,18 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Returns <code>true</code> if there is enough persisted information to attempt a session
-     * recovery. For this to return <code>true</code>, there needs to be persisted session ID and
-     * route ID from the last successful launch.
+     * Returns <code>true</code> if there is enough persisted information to attempt a session recovery. For this to
+     * return <code>true</code>, there needs to be persisted session ID and route ID from the last successful launch.
      */
     public final boolean canConsiderSessionRecovery(Context context) {
         return canConsiderSessionRecovery(context, null);
     }
 
     /**
-     * Returns <code>true</code> if there is enough persisted information to attempt a session
-     * recovery. For this to return <code>true</code>, there needs to be persisted session ID and
-     * route ID from the last successful launch. In addition, if <code>ssidName</code> is non-null,
-     * then an additional check is also performed to make sure the persisted wifi name is the same
-     * as the <code>ssidName</code>
+     * Returns <code>true</code> if there is enough persisted information to attempt a session recovery. For this to
+     * return <code>true</code>, there needs to be persisted session ID and route ID from the last successful launch. In
+     * addition, if <code>ssidName</code> is non-null, then an additional check is also performed to make sure the
+     * persisted wifi name is the same as the <code>ssidName</code>
      */
     public final boolean canConsiderSessionRecovery(Context context, String ssidName) {
         String sessionId = Utils.getStringFromPreference(context, PREFS_KEY_SESSION_ID);
@@ -778,18 +734,13 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * This method tries to automatically re-establish connection to a session if
-     * <ul>
-     * <li>User had not done a manual disconnect in the last session
-     * <li>The Cast Device that user had connected to previously is still running the same session
-     * </ul>
-     * Under these conditions, a best-effort attempt will be made to continue with the same
-     * session.
-     * This attempt will go on for <code>timeoutInSeconds</code> seconds. During this period, an
-     * optional dialog can be shown if <code>showDialog</code> is set to <code>true</code>. The
-     * message in this dialog can be changed by overriding the resource
-     * <code>R.string.session_reconnection_attempt</code>
-     * <p>Note: this variant does not check for the matching Wifi SSID name</p>
+     * This method tries to automatically re-establish connection to a session if <ul> <li>User had not done a manual
+     * disconnect in the last session <li>The Cast Device that user had connected to previously is still running the
+     * same session </ul> Under these conditions, a best-effort attempt will be made to continue with the same session.
+     * This attempt will go on for <code>timeoutInSeconds</code> seconds. During this period, an optional dialog can be
+     * shown if <code>showDialog</code> is set to <code>true</code>. The message in this dialog can be changed by
+     * overriding the resource <code>R.string.session_reconnection_attempt</code> <p>Note: this variant does not check
+     * for the matching Wifi SSID name</p>
      */
     public void reconnectSessionIfPossible(final Context context, final boolean showDialog,
             final int timeoutInSeconds) {
@@ -797,17 +748,12 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * This method tries to automatically re-establish connection to a session if
-     * <ul>
-     * <li>User had not done a manual disconnect in the last session
-     * <li>The Cast Device that user had connected to previously is still running the same session
-     * </ul>
-     * Under these conditions, a best-effort attempt will be made to continue with the same
-     * session.
-     * This attempt will go on for <code>timeoutInSeconds</code> seconds. During this period, an
-     * optional dialog can be shown if <code>showDialog</code> is set to <code>true</code>. The
-     * message in this dialog can be changed by overriding the resource
-     * <code>R.string.session_reconnection_attempt</code>
+     * This method tries to automatically re-establish connection to a session if <ul> <li>User had not done a manual
+     * disconnect in the last session <li>The Cast Device that user had connected to previously is still running the
+     * same session </ul> Under these conditions, a best-effort attempt will be made to continue with the same session.
+     * This attempt will go on for <code>timeoutInSeconds</code> seconds. During this period, an optional dialog can be
+     * shown if <code>showDialog</code> is set to <code>true</code>. The message in this dialog can be changed by
+     * overriding the resource <code>R.string.session_reconnection_attempt</code>
      *
      * @param ssidName The name of Wifi SSID
      */
@@ -953,17 +899,11 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * This method tries to automatically re-establish re-establish connection to a session if
-     * <ul>
-     * <li>User had not done a manual disconnect in the last session
-     * <li>Device that user had connected to previously is still running the same session
-     * </ul>
-     * Under these conditions, a best-effort attempt will be made to continue with the same
-     * session.
-     * This attempt will go on for 5 seconds. During this period, an optional dialog can be shown
-     * if
-     * <code>showDialog</code> is set to <code>true
-     * </code>.
+     * This method tries to automatically re-establish re-establish connection to a session if <ul> <li>User had not
+     * done a manual disconnect in the last session <li>Device that user had connected to previously is still running
+     * the same session </ul> Under these conditions, a best-effort attempt will be made to continue with the same
+     * session. This attempt will go on for 5 seconds. During this period, an optional dialog can be shown if
+     * <code>showDialog</code> is set to <code>true </code>.
      *
      * @param showDialog if set to <code>true</code>, a dialog will be shown
      */
@@ -976,8 +916,8 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     /***** GoogleApiClient.ConnectionCallbacks ******************/
     /************************************************************/
     /**
-     * This is called by the library when a connection is re-established after a transient
-     * disconnect. Note: this is not called by SDK.
+     * This is called by the library when a connection is re-established after a transient disconnect. Note: this is not
+     * called by SDK.
      */
     public void onConnectivityRecovered() {
         synchronized (mBaseCastConsumers) {
@@ -1172,11 +1112,6 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
 
     /**
      * Stops the application on the receiver device.
-     *
-     * @throws IllegalStateException
-     * @throws IOException
-     * @throws NoConnectionException
-     * @throws TransientNetworkDisconnectionException
      */
     public void stopApplication() throws IllegalStateException, IOException,
             TransientNetworkDisconnectionException, NoConnectionException {
@@ -1202,8 +1137,8 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     /***** Registering IBaseCastConsumer listeners ***************/
     /*************************************************************/
     /**
-     * Registers an {@link IBaseCastConsumer} interface with this class. Registered listeners will
-     * be notified of changes to a variety of lifecycle callbacks that the interface provides.
+     * Registers an {@link IBaseCastConsumer} interface with this class. Registered listeners will be notified of
+     * changes to a variety of lifecycle callbacks that the interface provides.
      *
      * @see BaseCastConsumerImpl
      */
@@ -1235,7 +1170,7 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
      * A simple method that throws an exception of there is no connectivity to the cast device.
      *
      * @throws TransientNetworkDisconnectionException If framework is still trying to recover
-     * @throws NoConnectionException If no connectivity to the device exists
+     * @throws NoConnectionException                  If no connectivity to the device exists
      */
     public void checkConnectivity() throws TransientNetworkDisconnectionException,
             NoConnectionException {
@@ -1264,23 +1199,9 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     }
 
     /**
-     * Returns the version of this library.
-     */
-    public final static String getCclVersion() {
-        return CCL_VERSION;
-    }
-
-    /**
-     * Clears the persisted connection information. Bitwise OR combination of the following options
-     * should be passed as the argument:
-     * <ul>
-     * <li>CLEAR_SESSION</li>
-     * <li>CLEAR_ROUTE</li>
-     * <li>CLEAR_WIFI</li>
-     * <li>CLEAR_MEDIA_END</li>
-     * <li>CLEAR_ALL</li>
-     * </ul>
-     * Clients can form an or
+     * Clears the persisted connection information. Bitwise OR combination of the following options should be passed as
+     * the argument: <ul> <li>CLEAR_SESSION</li> <li>CLEAR_ROUTE</li> <li>CLEAR_WIFI</li> <li>CLEAR_MEDIA_END</li>
+     * <li>CLEAR_ALL</li> </ul> Clients can form an or
      */
     public final void clearPersistedConnectionInfo(int what) {
         LOGD(TAG, "clearPersistedConnectionInfo(): Clearing persisted data for " + what);
@@ -1320,6 +1241,13 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
         Intent service = new Intent(applicationContext, ReconnectionService.class);
         service.setPackage(applicationContext.getPackageName());
         applicationContext.stopService(service);
+    }
+
+    /**
+     * Enumerates various stages during a session recovery
+     */
+    public static enum ReconnectionStatus {
+        STARTED, IN_PROGRESS, FINALIZE, INACTIVE
     }
 
     /**

@@ -28,15 +28,14 @@ import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 
 /**
- * Provides a handy implementation of {@link MediaRouter.Callback}. When a {@link RouteInfo} is
- * selected by user from the list of available routes, this class will call the
- * {@link DeviceSelectionListener#setDevice(CastDevice))} of the listener that was passed to it in
- * the constructor. In addition, as soon as a non-default route is discovered, the
- * {@link DeviceSelectionListener#onCastDeviceDetected(CastDevice))} is called.
- * <p>
- * There is also logic in this class to help with the process of previous session recovery.
+ * Provides a handy implementation of {@link MediaRouter.Callback}. When a {@link RouteInfo} is selected by user from
+ * the list of available routes, this class will call the {@link DeviceSelectionListener#setDevice(CastDevice))} of the
+ * listener that was passed to it in the constructor. In addition, as soon as a non-default route is discovered, the
+ * {@link DeviceSelectionListener#onCastDeviceDetected(CastDevice))} is called. <p> There is also logic in this class to
+ * help with the process of previous session recovery.
  */
 public class CastMediaRouterCallback extends MediaRouter.Callback {
+
     private static final String TAG = LogUtils.makeLogTag(CastMediaRouterCallback.class);
     private final DeviceSelectionListener selectDeviceInterface;
     private final Context mContext;

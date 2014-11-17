@@ -17,9 +17,9 @@
 package com.google.sample.castcompanionlibrary.cast.exceptions;
 
 /**
- * Is used to indicate a transient disconnection that may be corrected automatically by the
- * framework.
+ * Is used to indicate a transient disconnection that may be corrected automatically by the framework.
  */
 @SuppressWarnings("serial")
 public class TransientNetworkDisconnectionException extends Exception {
+
 }

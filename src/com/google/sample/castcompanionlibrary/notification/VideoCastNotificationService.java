@@ -52,13 +52,11 @@ import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
 import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
- * A service to provide status bar Notifications when we are casting. For JB+ versions, notification
- * area provides a play/pause toggle and an "x" button to disconnect but that for GB, we do not
- * show that due to the framework limitations.
+ * A service to provide status bar Notifications when we are casting. For JB+ versions, notification area provides a
+ * play/pause toggle and an "x" button to disconnect but that for GB, we do not show that due to the framework
+ * limitations.
  */
 public class VideoCastNotificationService extends Service {
-
-    private static final String TAG = LogUtils.makeLogTag(VideoCastNotificationService.class);
 
     public static final String ACTION_TOGGLE_PLAYBACK =
             "com.google.sample.castcompanionlibrary.action.toggleplayback";
@@ -66,10 +64,11 @@ public class VideoCastNotificationService extends Service {
             "com.google.sample.castcompanionlibrary.action.stop";
     public static final String ACTION_VISIBILITY =
             "com.google.sample.castcompanionlibrary.action.notificationvisibility";
-
-    private static final int NOTIFICATION_ID = 1;
     public static final String NOTIFICATION_VISIBILITY = "visible";
-
+    private static final String TAG = LogUtils.makeLogTag(VideoCastNotificationService.class);
+    private static final int NOTIFICATION_ID = 1;
+    boolean mIsIcsOrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    boolean mIsLollipopOrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     private String mApplicationId;
     private Bitmap mVideoArtBitmap;
     private Uri mVideoArtUri;
@@ -80,8 +79,6 @@ public class VideoCastNotificationService extends Service {
     private int mOldStatus = -1;
     private Notification mNotification;
     private boolean mVisible;
-    boolean mIsIcsOrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    boolean mIsLollipopOrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     private VideoCastManager mCastManager;
     private VideoCastConsumerImpl mConsumer;
     private FetchBitmapTask mBitmapDecoderTask;
@@ -178,7 +175,7 @@ public class VideoCastNotificationService extends Service {
                 imgUri = info.getMetadata().getImages().get(0).getUrl();
                 if (imgUri.equals(mVideoArtUri)) {
                     build(info, mVideoArtBitmap, mIsPlaying);
-                    return ;
+                    return;
                 }
             }
         } catch (CastException e) {
@@ -383,7 +380,7 @@ public class VideoCastNotificationService extends Service {
                         "Pause", playbackPendingIntent)
                 .addAction(R.drawable.ic_cast_stop, "Disconnect", stopPendingIntent)
                 .setStyle(new Notification.MediaStyle()
-                                .setShowActionsInCompactView(new int[]{0,1}))
+                        .setShowActionsInCompactView(new int[]{0, 1}))
                 .setOngoing(true)
                 .setShowWhen(false)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)

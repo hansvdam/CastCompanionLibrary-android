@@ -22,9 +22,8 @@ import com.google.android.gms.cast.TextTrackStyle;
 import java.util.Locale;
 
 /**
- * This is a no-ops implementation of {@link IVideoCastConsumer} so that the clients that like to
- * (partially) implement {@link IVideoCastConsumer} can extend this class and only override the
- * desired methods.
+ * This is a no-ops implementation of {@link IVideoCastConsumer} so that the clients that like to (partially) implement
+ * {@link IVideoCastConsumer} can extend this class and only override the desired methods.
  */
 public class VideoCastConsumerImpl extends BaseCastConsumerImpl
         implements IVideoCastConsumer {

@@ -57,6 +57,8 @@ import org.json.JSONObject;
  */
 public class Utils {
 
+    public static final boolean IS_KITKAT_OR_ABOVE = Build.VERSION.SDK_INT
+            >= Build.VERSION_CODES.KITKAT;
     private static final String TAG = LogUtils.makeLogTag(Utils.class);
     private static final String KEY_IMAGES = "images";
     private static final String KEY_URL = "movie-urls";
@@ -72,14 +74,9 @@ public class Utils {
     private static final String KEY_TRACK_LANGUAGE = "track-language";
     private static final String KEY_TRACK_CUSTOM_DATA = "track-custom-data";
     private static final String KEY_TRACKS_DATA = "track-data";
-    public static final boolean IS_KITKAT_OR_ABOVE = Build.VERSION.SDK_INT
-            >= Build.VERSION_CODES.KITKAT;
 
     /**
      * Formats time in milliseconds to hh:mm:ss string format.
-     *
-     * @param millis
-     * @return
      */
     public static String formatMillis(int millis) {
         String result = "";
@@ -107,11 +104,8 @@ public class Utils {
     }
 
     /**
-     * A utility method to show a simple error dialog. The textual content of the dialog is
-     * provided through the passed-in resource id.
-     *
-     * @param context
-     * @param resourceId
+     * A utility method to show a simple error dialog. The textual content of the dialog is provided through the
+     * passed-in resource id.
      */
     public static final void showErrorDialog(Context context, int resourceId) {
         //showErrorDialog(context, context.getString(resourceId));
@@ -121,7 +115,6 @@ public class Utils {
     /**
      * A utility method to show a simple error dialog.
      *
-     * @param context
      * @param message The message to be shown in the dialog
      */
     public static final void showErrorDialog(Context context, String message) {
@@ -139,22 +132,14 @@ public class Utils {
 
     /**
      * Shows a (long) toast.
-     *
-     * @param context
-     * @param resourceId
      */
     public static void showToast(Context context, int resourceId) {
         Toast.makeText(context, context.getString(resourceId), Toast.LENGTH_LONG).show();
     }
 
     /**
-     * Returns the URL of an image for the {@link MediaInformation} at the given level. Level
-     * should be a number between 0 and <code>n - 1</code> where <code>n</code> is the number of
-     * images for that given item.
-     *
-     * @param info
-     * @param level
-     * @return
+     * Returns the URL of an image for the {@link MediaInformation} at the given level. Level should be a number between
+     * 0 and <code>n - 1</code> where <code>n</code> is the number of images for that given item.
      */
     public static String getImageUrl(MediaInfo info, int level) {
         Uri uri = getImageUri(info, level);
@@ -165,13 +150,8 @@ public class Utils {
     }
 
     /**
-     * Returns the {@code Uri} address of an image for the {@link MediaInformation} at the given
-     * level. Level should be a number between 0 and <code>n - 1</code> where <code>n</code> is the
-     * number of images for that given item.
-     *
-     * @param info
-     * @param level
-     * @return
+     * Returns the {@code Uri} address of an image for the {@link MediaInformation} at the given level. Level should be
+     * a number between 0 and <code>n - 1</code> where <code>n</code> is the number of images for that given item.
      */
     public static Uri getImageUri(MediaInfo info, int level) {
         MediaMetadata mm = info.getMetadata();
@@ -182,12 +162,8 @@ public class Utils {
     }
 
     /**
-     * Saves a string value under the provided key in the preference manager. If <code>value</code>
-     * is <code>null</code>, then the provided key will be removed from the preferences.
-     *
-     * @param context
-     * @param key
-     * @param value
+     * Saves a string value under the provided key in the preference manager. If <code>value</code> is
+     * <code>null</code>, then the provided key will be removed from the preferences.
      */
     public static void saveStringToPreference(Context context, String key, String value) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -200,12 +176,8 @@ public class Utils {
     }
 
     /**
-     * Saves a float value under the provided key in the preference manager. If <code>value</code>
-     * is <code>Float.MIN_VALUE</code>, then the provided key will be removed from the preferences.
-     *
-     * @param context
-     * @param key
-     * @param value
+     * Saves a float value under the provided key in the preference manager. If <code>value</code> is
+     * <code>Float.MIN_VALUE</code>, then the provided key will be removed from the preferences.
      */
     public static void saveFloatToPreference(Context context, String key, float value) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -219,12 +191,8 @@ public class Utils {
     }
 
     /**
-     * Saves a long value under the provided key in the preference manager. If <code>value</code>
-     * is <code>Long.MIN_VALUE</code>, then the provided key will be removed from the preferences.
-     *
-     * @param context
-     * @param key
-     * @param value
+     * Saves a long value under the provided key in the preference manager. If <code>value</code> is
+     * <code>Long.MIN_VALUE</code>, then the provided key will be removed from the preferences.
      */
     public static void saveLongToPreference(Context context, String key, long value) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -238,12 +206,7 @@ public class Utils {
     }
 
     /**
-     * Retrieves a String value from preference manager. If no such key exists, it will return
-     * <code>null</code>.
-     *
-     * @param context
-     * @param key
-     * @return
+     * Retrieves a String value from preference manager. If no such key exists, it will return <code>null</code>.
      */
     public static String getStringFromPreference(Context context, String key) {
         return getStringFromPreference(context, key, null);
@@ -252,11 +215,6 @@ public class Utils {
     /**
      * Retrieves a String value from preference manager. If no such key exists, it will return
      * <code>defaultValue</code>.
-     *
-     * @param context
-     * @param key
-     * @param defaultValue
-     * @return
      */
     public static String getStringFromPreference(Context context, String key, String defaultValue) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -266,10 +224,6 @@ public class Utils {
     /**
      * Retrieves a float value from preference manager. If no such key exists, it will return
      * <code>Float.MIN_VALUE</code>.
-     *
-     * @param context
-     * @param key
-     * @return
      */
     public static float getFloatFromPreference(Context context, String key) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -277,13 +231,8 @@ public class Utils {
     }
 
     /**
-     * Retrieves a boolean value from preference manager. If no such key exists, it will return the
-     * value provided as <code>defaultValue</code>
-     *
-     * @param context
-     * @param key
-     * @param defaultValue
-     * @return
+     * Retrieves a boolean value from preference manager. If no such key exists, it will return the value provided as
+     * <code>defaultValue</code>
      */
     public static boolean getBooleanFromPreference(Context context, String key,
             boolean defaultValue) {
@@ -292,13 +241,8 @@ public class Utils {
     }
 
     /**
-     * Retrieves a long value from preference manager. If no such key exists, it will return the
-     * value provided as <code>defaultValue</code>
-     *
-     * @param context
-     * @param key
-     * @param defaultValue
-     * @return
+     * Retrieves a long value from preference manager. If no such key exists, it will return the value provided as
+     * <code>defaultValue</code>
      */
     public static long getLongFromPreference(Context context, String key,
             long defaultValue) {
@@ -307,14 +251,10 @@ public class Utils {
     }
 
     /**
-     * A utility method to validate that the appropriate version of the Google Play Services is
-     * available on the device. If not, it will open a dialog to address the issue. The dialog
-     * displays a localized message about the error and upon user confirmation (by tapping on
-     * dialog) will direct them to the Play Store if Google Play services is out of date or
-     * missing, or to system settings if Google Play services is disabled on the device.
-     *
-     * @param activity
-     * @return
+     * A utility method to validate that the appropriate version of the Google Play Services is available on the device.
+     * If not, it will open a dialog to address the issue. The dialog displays a localized message about the error and
+     * upon user confirmation (by tapping on dialog) will direct them to the Play Store if Google Play services is out
+     * of date or missing, or to system settings if Google Play services is disabled on the device.
      */
     public static boolean checkGooglePlayServices(final Activity activity) {
         final int googlePlayServicesCheck = GooglePlayServicesUtil.isGooglePlayServicesAvailable(
@@ -344,12 +284,10 @@ public class Utils {
     }
 
     /**
-     * Builds and returns a {@link Bundle} which contains a select subset of data in the
-     * {@link MediaInfo}. Since {@link MediaInfo} is not {@link Parcelable}, one can use this
-     * container bundle to pass around from one activity to another.
+     * Builds and returns a {@link Bundle} which contains a select subset of data in the {@link MediaInfo}. Since {@link
+     * MediaInfo} is not {@link Parcelable}, one can use this container bundle to pass around from one activity to
+     * another.
      *
-     * @param info
-     * @return
      * @see <code>toMediaInfo()</code>
      */
     public static Bundle fromMediaInfo(MediaInfo info) {
@@ -403,11 +341,8 @@ public class Utils {
     }
 
     /**
-     * Builds and returns a {@link MediaInfo} that was wrapped in a {@link Bundle} by
-     * <code>fromMediaInfo</code>.
+     * Builds and returns a {@link MediaInfo} that was wrapped in a {@link Bundle} by <code>fromMediaInfo</code>.
      *
-     * @param wrapper
-     * @return
      * @see <code>fromMediaInfo()</code>
      */
     public static MediaInfo toMediaInfo(Bundle wrapper) {
@@ -483,9 +418,6 @@ public class Utils {
 
     /**
      * Returns the SSID of the wifi connection, or <code>null</code> if there is no wifi.
-     *
-     * @param context
-     * @return
      */
     public static String getWifiSsid(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);

@@ -42,23 +42,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class manages preference settings for captions for Android versions prior to KitKat and
- * provides a number of methods that would work across all supported versions of Android.
+ * This class manages preference settings for captions for Android versions prior to KitKat and provides a number of
+ * methods that would work across all supported versions of Android.
  */
 public class TracksPreferenceManager implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final Context mContext;
-    private final SharedPreferences mSharedPreferences;
-
-    public TracksPreferenceManager(Context context) {
-        mContext = context;
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    private static final String TAG = LogUtils.makeLogTag(TracksPreferenceManager.class);
     public static final String FONT_FAMILY_SANS_SERIF = "FONT_FAMILY_SANS_SERIF";
     public static final String EDGE_TYPE_DEFAULT = "EDGE_TYPE_NONE";
+    private static final String TAG = LogUtils.makeLogTag(TracksPreferenceManager.class);
+    private static Map<String, String> OPACITY_MAPPING = new HashMap<String, String>();
+    private static Map<String, Integer> FONT_FAMILY_MAPPING = new HashMap<String, Integer>();
+    private static Map<String, Integer> EDGE_TYPE_MAPPING = new HashMap<String, Integer>();
+    private final Context mContext;
+    private final SharedPreferences mSharedPreferences;
     private ListPreference mCaptionFontScaleListPreference;
     private ListPreference mCaptionFontFamilyListPreference;
     private ListPreference mCaptionTextColorListPreference;
@@ -67,9 +63,6 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
     private ListPreference mCaptionBackgroundColorListPreference;
     private ListPreference mCaptionBackgroundOpacityListPreference;
     private CheckBoxPreference mCaptionAvailability;
-    private static Map<String, String> OPACITY_MAPPING = new HashMap<String, String>();
-    private static Map<String, Integer> FONT_FAMILY_MAPPING = new HashMap<String, Integer>();
-    private static Map<String, Integer> EDGE_TYPE_MAPPING = new HashMap<String, Integer>();
     private boolean isInitialized = false;
 
     static {
@@ -90,6 +83,17 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
         EDGE_TYPE_MAPPING.put("EDGE_TYPE_NONE", TextTrackStyle.EDGE_TYPE_NONE);
         EDGE_TYPE_MAPPING.put("EDGE_TYPE_OUTLINE", TextTrackStyle.EDGE_TYPE_OUTLINE);
         EDGE_TYPE_MAPPING.put("EDGE_TYPE_DROP_SHADOW", TextTrackStyle.EDGE_TYPE_DROP_SHADOW);
+    }
+
+    public TracksPreferenceManager(Context context) {
+        mContext = context;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private static int combineColorAndOpacity(String color, String opacity) {
+        color = color.replace("#", "");
+        return Color.parseColor("#" + opacity + color);
     }
 
     @SuppressLint("NewApi")
@@ -137,19 +141,14 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
         }
     }
 
-    public void setFontFamily(String fontFamily) {
-        Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_font_family), fontFamily);
-    }
-
     public String getFontFamily() {
         return Utils.getStringFromPreference(mContext,
                 mContext.getString(R.string.ccl_key_caption_font_family), FONT_FAMILY_SANS_SERIF);
     }
 
-    public void setFontScale(String value) {
+    public void setFontFamily(String fontFamily) {
         Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_font_scale), value);
+                mContext.getString(R.string.ccl_key_caption_font_family), fontFamily);
     }
 
     public float getFontScale() {
@@ -159,9 +158,9 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
         return Float.parseFloat(scaleStr);
     }
 
-    public void setTextColor(String textColor) {
+    public void setFontScale(String value) {
         Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_text_color), textColor);
+                mContext.getString(R.string.ccl_key_caption_font_scale), value);
     }
 
     public String getTextColor() {
@@ -170,9 +169,9 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
                 mContext.getString(R.string.prefs_caption_text_color_value_default));
     }
 
-    public void setTextOpacity(String textColor) {
+    public void setTextColor(String textColor) {
         Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_text_opacity), textColor);
+                mContext.getString(R.string.ccl_key_caption_text_color), textColor);
     }
 
     public String getTextOpacity() {
@@ -181,14 +180,19 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
                 mContext.getString(R.string.prefs_caption_text_opacity_value_default));
     }
 
-    public void setEdgeType(String textColor) {
+    public void setTextOpacity(String textColor) {
         Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_edge_type), textColor);
+                mContext.getString(R.string.ccl_key_caption_text_opacity), textColor);
     }
 
     public String getEdgeType() {
         return Utils.getStringFromPreference(mContext,
                 mContext.getString(R.string.ccl_key_caption_edge_type), EDGE_TYPE_DEFAULT);
+    }
+
+    public void setEdgeType(String textColor) {
+        Utils.saveStringToPreference(mContext,
+                mContext.getString(R.string.ccl_key_caption_edge_type), textColor);
     }
 
     public void setBackgroundColor(Context mContext, String textColor) {
@@ -202,15 +206,15 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
                 mContext.getString(R.string.prefs_caption_background_color_value_default));
     }
 
-    public void setBackgroundOpacity(String textColor) {
-        Utils.saveStringToPreference(mContext,
-                mContext.getString(R.string.ccl_key_caption_background_opacity), textColor);
-    }
-
     public String getBackgroundOpacity() {
         return Utils.getStringFromPreference(mContext,
                 mContext.getString(R.string.ccl_key_caption_background_opacity),
                 mContext.getString(R.string.prefs_caption_background_opacity_value_default));
+    }
+
+    public void setBackgroundOpacity(String textColor) {
+        Utils.saveStringToPreference(mContext,
+                mContext.getString(R.string.ccl_key_caption_background_opacity), textColor);
     }
 
     public void setupPreferences(PreferenceScreen screen) {
@@ -376,10 +380,5 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
             }
         }
 
-    }
-
-    private static int combineColorAndOpacity(String color, String opacity) {
-        color = color.replace("#", "");
-        return Color.parseColor("#" + opacity + color);
     }
 }

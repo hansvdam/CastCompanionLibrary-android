@@ -22,8 +22,8 @@ import com.google.sample.castcompanionlibrary.cast.BaseCastManager;
 import android.util.Log;
 
 /**
- * Provides a simple wrapper to control logging in development vs production environment. This
- * library should only use the wrapper methods that this class provides.
+ * Provides a simple wrapper to control logging in development vs production environment. This library should only use
+ * the wrapper methods that this class provides.
  */
 public class LogUtils {
 
@@ -99,7 +99,7 @@ public class LogUtils {
         Log.e(tag, getVersionPrefix() + message, cause);
     }
 
-    public static String getVersionPrefix(){
+    public static String getVersionPrefix() {
         return "[v" + BaseCastManager.getCclVersion() + "] ";
     }
 

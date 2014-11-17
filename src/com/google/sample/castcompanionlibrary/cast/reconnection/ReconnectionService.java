@@ -42,18 +42,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * A service to run in the background when the playback of a media starts, to help with reconnection
- * if needed. Due to various reasons, connectivity to the cast device can be lost; for example wifi
- * radio may turn off when device goes to sleep or user may step outside of the wifi range, etc.
- * This service helps with recovering the connectivity when circumstances are right, for example
- * when user steps back within the wifi range, etc. In order to avoid ending up with a background
- * service that lingers around longer than it is needed, this implementation uses certain heuristics
+ * A service to run in the background when the playback of a media starts, to help with reconnection if needed. Due to
+ * various reasons, connectivity to the cast device can be lost; for example wifi radio may turn off when device goes to
+ * sleep or user may step outside of the wifi range, etc. This service helps with recovering the connectivity when
+ * circumstances are right, for example when user steps back within the wifi range, etc. In order to avoid ending up
+ * with a background service that lingers around longer than it is needed, this implementation uses certain heuristics
  * to stop itself when needed.
  */
 public class ReconnectionService extends Service {
 
     private static final String TAG = LogUtils.makeLogTag(ReconnectionService.class);
     private static final long EPSILON_MS = 500;
+    private static final int RECONNECTION_ATTEMPT_PERIOD_S = 15;
     private BroadcastReceiver mScreenOnOffBroadcastReceiver;
     private String mApplicationId;
     private String mDataNamespace;
@@ -63,7 +63,6 @@ public class ReconnectionService extends Service {
     private boolean mWifiConnectivity = true;
     private Timer mEndTimer;
     private TimerTask mEndTimerTask;
-    private static final int RECONNECTION_ATTEMPT_PERIOD_S = 15;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

@@ -49,22 +49,18 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 /**
- * This class provides an {@link Activity} that clients can easily add to their applications to
- * provide an out-of-the-box remote player when a video is casting to a cast device.
- * {@link VideoCastManager} can manage the lifecycle and presentation of this activity.
- * <p>
- * This activity provides a number of controllers for managing the playback of the remote content:
- * play/pause (or play/stop when a live stream is used) and seekbar (for non-live streams).
- * <p>
- * Clients who need to perform a pre-authorization process for playback can register a
- * {@link IMediaAuthListener} by calling
- * {@link VideoCastManager#startCastControllerActivity(android.content.Context,
- * IMediaAuthService)}.
- * In that case, this activity manages starting the {@link IMediaAuthService} and will register a
+ * This class provides an {@link Activity} that clients can easily add to their applications to provide an
+ * out-of-the-box remote player when a video is casting to a cast device. {@link VideoCastManager} can manage the
+ * lifecycle and presentation of this activity. <p> This activity provides a number of controllers for managing the
+ * playback of the remote content: play/pause (or play/stop when a live stream is used) and seekbar (for non-live
+ * streams). <p> Clients who need to perform a pre-authorization process for playback can register a {@link
+ * IMediaAuthListener} by calling {@link VideoCastManager#startCastControllerActivity(android.content.Context,
+ * IMediaAuthService)}. In that case, this activity manages starting the {@link IMediaAuthService} and will register a
  * listener to handle the result.
  */
 public class VideoCastControllerActivity extends ActionBarActivity implements IVideoCastController {
 
+    public static final float DEFAULT_VOLUME_INCREMENT = 0.05f;
     private static final String TAG = LogUtils.makeLogTag(VideoCastControllerActivity.class);
     private VideoCastManager mCastManager;
     private ImageView mPlayPause;
@@ -84,7 +80,6 @@ public class VideoCastControllerActivity extends ActionBarActivity implements IV
     private VideoCastControllerFragment mVideoCastControllerFragment;
     private OnVideoCastControllerListener mListener;
     private int mStreamType;
-    public static final float DEFAULT_VOLUME_INCREMENT = 0.05f;
     private ImageView mBackgroundImage;
 
     @Override

@@ -31,47 +31,33 @@ public interface IVideoCastController {
 
     /**
      * Sets the bitmap for the album art
-     *
-     * @param bitmap
      */
     public void setImage(Bitmap bitmap);
 
     /**
      * Sets the title
-     *
-     * @param text
      */
     public void setLine1(String text);
 
     /**
      * Sets the subtitle
-     *
-     * @param text
      */
     public void setLine2(String text);
 
     /**
-     * Sets the playback state, and the idleReason (this is only reliable when the state is idle).
-     * Values that can be passed to this method are from {@link MediaStatus}
-     *
-     * @param state
-     * @param idleReason
+     * Sets the playback state, and the idleReason (this is only reliable when the state is idle). Values that can be
+     * passed to this method are from {@link MediaStatus}
      */
     public void setPlaybackStatus(int state);
 
     /**
-     * Assigns a {@link OnMiniControllerChangedListener} listener to be notified of the changes in
-     * the mini controller
-     *
-     * @param listener
+     * Assigns a {@link OnMiniControllerChangedListener} listener to be notified of the changes in the mini controller
      */
     public void setOnVideoCastControllerChangedListener(OnVideoCastControllerListener listener);
 
     /**
-     * Sets the type of stream. <code>streamType</code> can be {@link MediaInfo.STREAM_TYPE_LIVE} or
-     * {@link MediaInfo.STREAM_TYPE_BUFFERED}
-     *
-     * @param streamType
+     * Sets the type of stream. <code>streamType</code> can be {@link MediaInfo.STREAM_TYPE_LIVE} or {@link
+     * MediaInfo.STREAM_TYPE_BUFFERED}
      */
     public void setStreamType(int streamType);
 
@@ -86,9 +72,8 @@ public interface IVideoCastController {
     public void adjustControllersForLiveStream(boolean isLive);
 
     /**
-     * Updates the visual status of the Closed Caption icon. Possible states are provided by
-     * <code>CC_ENABLED, CC_DISABLED, CC_HIDDEN</code>
-     * @param status
+     * Updates the visual status of the Closed Caption icon. Possible states are provided by <code>CC_ENABLED,
+     * CC_DISABLED, CC_HIDDEN</code>
      */
     public void updateClosedCaption(int status);
 }

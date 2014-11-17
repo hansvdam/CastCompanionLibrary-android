@@ -56,14 +56,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
- * A custom {@link MediaRouteControllerDialog} that provides an album art, a play/pause button and
- * the ability to take user to the target activity when the album art is tapped.
+ * A custom {@link MediaRouteControllerDialog} that provides an album art, a play/pause button and the ability to take
+ * user to the target activity when the album art is tapped.
  */
 public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog {
 
     private static final String TAG =
             LogUtils.makeLogTag(VideoMediaRouteControllerDialog.class);
-
+    protected int mState;
     private ImageView mIcon;
     private ImageView mPausePlay;
     private ImageView mSkipRewind;
@@ -74,7 +74,6 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
     private ProgressBar mLoading;
     private Uri mIconUri;
     private VideoCastManager mCastManager;
-    protected int mState;
     private VideoCastConsumerImpl castConsumerImpl;
     private Drawable mPauseDrawable;
     private Drawable mPlayDrawable;
@@ -91,18 +90,6 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
 
     public VideoMediaRouteControllerDialog(Context context, int theme) {
         super(context, theme);
-    }
-
-    @Override
-    protected void onStop() {
-        if (null != mCastManager) {
-            mCastManager.removeVideoCastConsumer(castConsumerImpl);
-        }
-        if (mFetchBitmap != null) {
-            mFetchBitmap.cancel(true);
-            mFetchBitmap = null;
-        }
-        super.onStop();
     }
 
     /**
@@ -144,6 +131,18 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
         }
     }
 
+    @Override
+    protected void onStop() {
+        if (null != mCastManager) {
+            mCastManager.removeVideoCastConsumer(castConsumerImpl);
+        }
+        if (mFetchBitmap != null) {
+            mFetchBitmap.cancel(true);
+            mFetchBitmap = null;
+        }
+        super.onStop();
+    }
+
     /*
      * Hides/show the icon and metadata and play/pause if there is no media
      */
@@ -155,7 +154,9 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
         mControlsContainer.setVisibility(visibility);
         mEmptyText.setText(resId == 0 ? R.string.no_media_info : resId);
         mEmptyText.setVisibility(hide ? View.VISIBLE : View.GONE);
-        if (hide) mPausePlay.setVisibility(visibility);
+        if (hide) {
+            mPausePlay.setVisibility(visibility);
+        }
     }
 
     private void updateMetadata() {
@@ -338,8 +339,8 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
                     return;
                 }
                 try {
-                    long new_pos = mCastManager.getCurrentMediaPosition() + 30*1000;
-                    if (new_pos <= mCastManager.getMediaDuration() ) {
+                    long new_pos = mCastManager.getCurrentMediaPosition() + 30 * 1000;
+                    if (new_pos <= mCastManager.getMediaDuration()) {
                         mCastManager.seek((int) new_pos);
                     }
                 } catch (TransientNetworkDisconnectionException e) {
@@ -359,8 +360,8 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
                     return;
                 }
                 try {
-                    long new_pos = mCastManager.getCurrentMediaPosition() - 30*1000;
-                    if (new_pos >= 0 ) {
+                    long new_pos = mCastManager.getCurrentMediaPosition() - 30 * 1000;
+                    if (new_pos >= 0) {
                         mCastManager.seek((int) new_pos);
                     }
                 } catch (TransientNetworkDisconnectionException e) {

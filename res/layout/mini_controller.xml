@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/bigContainer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="0dp" >
+    android:paddingTop="0dp">
 
     <ImageView
         android:id="@+id/iconView"
@@ -11,7 +12,7 @@
         android:layout_height="@dimen/mini_controller_icon_height"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="7dp"
-        android:src="@drawable/mini_controller_img_placeholder"/>
+        android:src="@drawable/mini_controller_img_placeholder" />
 
     <ImageView
         android:id="@+id/playPauseView"
@@ -20,7 +21,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="4dp"
-        android:src="@drawable/ic_mini_controller_pause"/>
+        android:src="@drawable/ic_mini_controller_pause" />
 
     <ProgressBar
         android:id="@+id/loadingView"
@@ -31,7 +32,7 @@
         android:layout_alignRight="@+id/playPauseView"
         android:layout_alignTop="@+id/playPauseView"
         android:layout_centerVertical="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/titleView"
@@ -45,7 +46,7 @@
         android:layout_toRightOf="@+id/iconView"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="@dimen/mini_controller_font_size_line1"/>
+        android:textSize="@dimen/mini_controller_font_size_line1" />
 
     <TextView
         android:id="@+id/subTitleView"
@@ -59,6 +60,6 @@
         android:layout_toRightOf="@+id/iconView"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="@dimen/mini_controller_font_size_line2"/>
+        android:textSize="@dimen/mini_controller_font_size_line2" />
 
 </RelativeLayout>

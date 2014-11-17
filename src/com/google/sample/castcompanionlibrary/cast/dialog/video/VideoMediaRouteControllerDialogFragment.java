@@ -21,8 +21,7 @@ import android.os.Bundle;
 import android.support.v7.app.MediaRouteControllerDialogFragment;
 
 /**
- * An extension of MediaRouteControllerDialogFragment which contains a
- * VideoMediaRouteControllerDialog.
+ * An extension of MediaRouteControllerDialogFragment which contains a VideoMediaRouteControllerDialog.
  */
 public class VideoMediaRouteControllerDialogFragment extends MediaRouteControllerDialogFragment {
 

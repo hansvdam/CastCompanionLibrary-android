@@ -31,18 +31,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * An AsyncTask to fetch an image over HTTP and scale it to a desired size. Clients need to extend
- * this; it is recommended to start the execution by calling {@code start} rather than
- * {@code execute} to handle a uniform treatment of ThreadPool across various versions of Android.
+ * An AsyncTask to fetch an image over HTTP and scale it to a desired size. Clients need to extend this; it is
+ * recommended to start the execution by calling {@code start} rather than {@code execute} to handle a uniform treatment
+ * of ThreadPool across various versions of Android.
  */
 public abstract class FetchBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
+
     private final int mPreferredWidth;
     private final int mPreferredHeight;
 
     /**
      * Constructs a new FetchBitmapTask that will do scaling.
      *
-     * @param preferredWidth The preferred image width.
+     * @param preferredWidth  The preferred image width.
      * @param preferredHeight The preferred image height.
      */
     public FetchBitmapTask(int preferredWidth, int preferredHeight) {
@@ -93,14 +94,13 @@ public abstract class FetchBitmapTask extends AsyncTask<Uri, Void, Bitmap> {
     }
 
     /**
-     * Executes the task. This is a simple wrapper for {@code execute())} method and is introduced
-     * to get around the size of thread pool in various versions of Android. Since {@code execute()}
-     * is {@code final}, we need to introduce another method.
-     * @param params
+     * Executes the task. This is a simple wrapper for {@code execute())} method and is introduced to get around the
+     * size of thread pool in various versions of Android. Since {@code execute()} is {@code final}, we need to
+     * introduce another method.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void start(Uri...params) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+    public void start(Uri... params) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
         } else {
             execute(params);

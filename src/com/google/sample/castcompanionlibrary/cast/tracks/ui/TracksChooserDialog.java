@@ -48,6 +48,12 @@ import java.util.List;
 public class TracksChooserDialog extends DialogFragment {
 
     private static final String TAG = "TracksChooserDialog";
+    private static final long TEXT_TRACK_NONE_ID = -1;
+    private static final MediaTrack TEXT_TRACK_NONE = new MediaTrack.Builder(TEXT_TRACK_NONE_ID,
+            MediaTrack.TYPE_TEXT)
+            .setName("None")
+            .setSubtype(MediaTrack.SUBTYPE_CAPTIONS)
+            .setContentId("").build();
     private VideoCastManager mCastManager;
     private long[] mActiveTracks = null;
     private OnTracksSelectedListener mListener;
@@ -56,14 +62,19 @@ public class TracksChooserDialog extends DialogFragment {
     private TracksListAdapter mAudioVideoAdapter;
     private List<MediaTrack> mTextTracks = new ArrayList<MediaTrack>();
     private List<MediaTrack> mAudioVideoTracks = new ArrayList<MediaTrack>();
-    private static final long TEXT_TRACK_NONE_ID = -1;
-    private static final MediaTrack TEXT_TRACK_NONE = new MediaTrack.Builder(TEXT_TRACK_NONE_ID,
-            MediaTrack.TYPE_TEXT)
-            .setName("None")
-            .setSubtype(MediaTrack.SUBTYPE_CAPTIONS)
-            .setContentId("").build();
     private int mSelectedTextPosition = 0;
     private int mSelectedAudioPosition = -1;
+
+    public TracksChooserDialog(MediaInfo mediaInfo, OnTracksSelectedListener listener) {
+        mMediaInfo = mediaInfo;
+        mListener = listener;
+        try {
+            mCastManager = VideoCastManager.getInstance();
+            mActiveTracks = mCastManager.getActiveTrackIds();
+        } catch (CastException e) {
+            LOGE(TAG, "Failed to get an instance of VideoCatManager", e);
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -119,8 +130,7 @@ public class TracksChooserDialog extends DialogFragment {
     }
 
     /**
-     * This is to get around the following bug:
-     * https://code.google.com/p/android/issues/detail?id=17423
+     * This is to get around the following bug: https://code.google.com/p/android/issues/detail?id=17423
      */
     @Override
     public void onDestroyView() {
@@ -188,7 +198,7 @@ public class TracksChooserDialog extends DialogFragment {
                     case MediaTrack.TYPE_TEXT:
                         mTextTracks.add(track);
                         if (mActiveTracks != null) {
-                            for(int i=0; i < mActiveTracks.length; i++) {
+                            for (int i = 0; i < mActiveTracks.length; i++) {
                                 if (mActiveTracks[i] == track.getId()) {
                                     mSelectedTextPosition = textPosition;
                                 }
@@ -200,7 +210,7 @@ public class TracksChooserDialog extends DialogFragment {
                     case MediaTrack.TYPE_VIDEO:
                         mAudioVideoTracks.add(track);
                         if (mActiveTracks != null) {
-                            for(int i=0; i < mActiveTracks.length; i++) {
+                            for (int i = 0; i < mActiveTracks.length; i++) {
                                 if (mActiveTracks[i] == track.getId()) {
                                     mSelectedAudioPosition = audioPosition;
                                 }
@@ -223,20 +233,8 @@ public class TracksChooserDialog extends DialogFragment {
         }
     }
 
-    public TracksChooserDialog(MediaInfo mediaInfo, OnTracksSelectedListener listener) {
-        mMediaInfo = mediaInfo;
-        mListener = listener;
-        try {
-            mCastManager = VideoCastManager.getInstance();
-            mActiveTracks = mCastManager.getActiveTrackIds();
-        } catch (CastException e) {
-            LOGE(TAG, "Failed to get an instance of VideoCatManager", e);
-        }
-    }
-
     /**
-     * An interface that would be used to inform
-     * {@link com.google.sample.castcompanionlibrary.cast.tracks.ui.TracksChooserDialog.OnTracksSelectedListener}
+     * An interface that would be used to inform {@link com.google.sample.castcompanionlibrary.cast.tracks.ui.TracksChooserDialog.OnTracksSelectedListener}
      * listeners when user is changing the active tracks for a media.
      */
     public interface OnTracksSelectedListener {

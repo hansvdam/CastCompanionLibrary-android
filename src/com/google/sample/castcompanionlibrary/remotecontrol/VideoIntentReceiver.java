@@ -30,8 +30,8 @@ import android.content.Intent;
 import android.view.KeyEvent;
 
 /**
- * A {@link BroadcastReceiver} for receiving media button actions (from the lock screen) as well as
- * the the status bar notification media actions.
+ * A {@link BroadcastReceiver} for receiving media button actions (from the lock screen) as well as the the status bar
+ * notification media actions.
  */
 public class VideoIntentReceiver extends BroadcastReceiver {
 

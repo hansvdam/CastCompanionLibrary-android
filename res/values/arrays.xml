@@ -78,13 +78,21 @@
     </string-array>
 
     <string-array name="prefs_caption_color_values">
-        <item>#FFFFFF</item> <!-- white -->
-        <item>#000000</item> <!-- black -->
-        <item>#FF0000</item> <!-- red -->
-        <item>#FFFF00</item> <!-- yellow -->
-        <item>#00FF00</item> <!-- green -->
-        <item>#00FFFF</item> <!-- cyan -->
-        <item>#0000FF</item> <!-- blue -->
-        <item>#FF00FF</item> <!-- magenta -->
+        <item>#FFFFFF</item>
+        <!-- white -->
+        <item>#000000</item>
+        <!-- black -->
+        <item>#FF0000</item>
+        <!-- red -->
+        <item>#FFFF00</item>
+        <!-- yellow -->
+        <item>#00FF00</item>
+        <!-- green -->
+        <item>#00FFFF</item>
+        <!-- cyan -->
+        <item>#0000FF</item>
+        <!-- blue -->
+        <item>#FF00FF</item>
+        <!-- magenta -->
     </string-array>
 </resources>

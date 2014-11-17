@@ -17,9 +17,9 @@
                 android:id="@+id/iconContainer"
                 android:layout_width="68dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true">
+                android:layout_margin="10dp">
 
                 <ImageView
                     android:id="@+id/iconView"
@@ -28,7 +28,7 @@
                     android:adjustViewBounds="false"
                     android:cropToPadding="false"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/video_placeholder_200x200"/>
+                    android:src="@drawable/video_placeholder_200x200" />
 
             </RelativeLayout>
 
@@ -40,7 +40,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_toRightOf="@+id/iconContainer"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/titleView"
@@ -54,10 +54,11 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/mr_custom_line_1"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/subTitleView"
+                    style="@style/CastDialogSubTitle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/iconContainer"
@@ -66,8 +67,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_toRightOf="@+id/iconContainer"
                     android:ellipsize="end"
-                    android:maxLines="1"
-                    style="@style/CastDialogSubTitle"/>
+                    android:maxLines="1" />
             </LinearLayout>
 
             <TextView
@@ -82,7 +82,7 @@
                 android:text="@string/no_media_info"
                 android:textAlignment="center"
                 android:textSize="15sp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -97,25 +97,25 @@
                 android:layout_height="28dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/chromecast_pause_dark"/>
+                android:src="@drawable/chromecast_pause_dark" />
 
             <ImageView
                 android:id="@+id/playForwardView"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="35dp"
                 android:layout_toRightOf="@+id/playPauseView"
-                android:layout_centerVertical="true"
-                android:src="@drawable/chromecast_forward_dark"/>
+                android:src="@drawable/chromecast_forward_dark" />
 
             <ImageView
                 android:id="@+id/playRewindView"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="35dp"
                 android:layout_toLeftOf="@+id/playPauseView"
-                android:layout_centerVertical="true"
-                android:src="@drawable/chromecast_rewind_dark"/>
+                android:src="@drawable/chromecast_rewind_dark" />
 
             <ProgressBar
                 android:id="@+id/loadingView"
@@ -126,7 +126,7 @@
                 android:layout_alignRight="@+id/playPauseView"
                 android:layout_alignTop="@+id/playPauseView"
                 android:layout_centerVertical="true"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
 

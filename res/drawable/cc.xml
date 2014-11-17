@@ -2,20 +2,15 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- pressed -->
-    <item android:state_pressed="true"
-          android:drawable="@drawable/ic_closed_caption_blue"/>
+    <item android:drawable="@drawable/ic_closed_caption_blue" android:state_pressed="true" />
     <!-- focused -->
-    <item android:state_focused="true"
-          android:drawable="@drawable/ic_closed_caption_white"/>
+    <item android:drawable="@drawable/ic_closed_caption_white" android:state_focused="true" />
     <!-- hovered -->
-    <item android:state_hovered="true"
-          android:drawable="@drawable/ic_closed_caption_white"/>
+    <item android:drawable="@drawable/ic_closed_caption_white" android:state_hovered="true" />
     <!-- activated -->
-    <item android:state_enabled="true"
-          android:drawable="@drawable/ic_closed_caption_white"/>
+    <item android:drawable="@drawable/ic_closed_caption_white" android:state_enabled="true" />
     <!-- deactivated -->
-    <item android:state_enabled="false"
-          android:drawable="@drawable/ic_closed_caption_grey"/>
+    <item android:drawable="@drawable/ic_closed_caption_grey" android:state_enabled="false" />
     <!-- default -->
-    <item android:drawable="@drawable/ic_closed_caption_white"/>
+    <item android:drawable="@drawable/ic_closed_caption_white" />
 </selector>

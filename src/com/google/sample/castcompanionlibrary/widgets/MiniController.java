@@ -40,11 +40,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 /**
- * A compound component that provides a superset of functionalities required for the global access
- * requirement. This component provides an image for the album art, a play/pause button, a seekbar
- * for trick-play with current time and duration and a mute/unmute button. Clients can add this
- * compound component to their layout xml and register that with the instance of
- * {@link VideoCastManager} by using the following pattern:<br/>
+ * A compound component that provides a superset of functionalities required for the global access requirement. This
+ * component provides an image for the album art, a play/pause button, a seekbar for trick-play with current time and
+ * duration and a mute/unmute button. Clients can add this compound component to their layout xml and register that with
+ * the instance of {@link VideoCastManager} by using the following pattern:<br/>
  *
  * <pre>
  * mMiniController = (MiniController) findViewById(R.id.miniController1);
@@ -52,20 +51,19 @@ import android.widget.TextView;
  * mMiniController.setOnMiniControllerChangedListener(mCastManager);
  * </pre>
  *
- * Then the {@link VideoCastManager} will manage the behavior, including its state and metadata and
- * interactions.
+ * Then the {@link VideoCastManager} will manage the behavior, including its state and metadata and interactions.
  */
 public class MiniController extends RelativeLayout implements IMiniController {
 
+    public static final int PLAYBACK = 1;
+    public static final int PAUSE = 2;
+    public static final int IDLE = 3;
     private static final String TAG = "MiniController";
     protected ImageView mIcon;
     protected TextView mTitle;
     protected TextView mSubTitle;
     protected ImageView mPlayPause;
     protected ProgressBar mLoading;
-    public static final int PLAYBACK = 1;
-    public static final int PAUSE = 2;
-    public static final int IDLE = 3;
     private OnMiniControllerChangedListener mListener;
     private Uri mIconUri;
     private Drawable mPauseDrawable;
@@ -91,11 +89,17 @@ public class MiniController extends RelativeLayout implements IMiniController {
     }
 
     /**
-     * Sets the listener that should be notified when a relevant event is fired from this component.
-     * Clients can register the {@link VideoCastManager} instance to be the default listener so it
-     * can control the remote media playback.
-     *
-     * @param listener
+     * Constructor
+     */
+    public MiniController(Context context) {
+        super(context);
+        loadViews();
+    }
+
+    /**
+     * Sets the listener that should be notified when a relevant event is fired from this component. Clients can
+     * register the {@link VideoCastManager} instance to be the default listener so it can control the remote media
+     * playback.
      */
     @Override
     public void setOnMiniControllerChangedListener(OnMiniControllerChangedListener listener) {
@@ -106,8 +110,6 @@ public class MiniController extends RelativeLayout implements IMiniController {
 
     /**
      * Removes the listener that was registered by {@link setOnMiniControllerChangedListener}
-     *
-     * @param listener
      */
     public void removeOnMiniControllerChangedListener(OnMiniControllerChangedListener listener) {
         if (null != listener && this.mListener == listener) {
@@ -157,16 +159,6 @@ public class MiniController extends RelativeLayout implements IMiniController {
 
             }
         });
-    }
-
-    /**
-     * Constructor
-     *
-     * @param context
-     */
-    public MiniController(Context context) {
-        super(context);
-        loadViews();
     }
 
     @Override
@@ -292,28 +284,19 @@ public class MiniController extends RelativeLayout implements IMiniController {
     }
 
     /**
-     * The interface for a listener that will be called when user interacts with the
-     * {@link MiniController}, like clicking on the play/pause button, etc.
+     * The interface for a listener that will be called when user interacts with the {@link MiniController}, like
+     * clicking on the play/pause button, etc.
      */
     public interface OnMiniControllerChangedListener extends OnFailedListener {
 
         /**
          * Notification that user has clicked on the Play/Pause button
-         *
-         * @param v
-         * @throws TransientNetworkDisconnectionException
-         * @throws NoConnectionException
-         * @throws CastException
          */
         public void onPlayPauseClicked(View v) throws CastException,
                 TransientNetworkDisconnectionException, NoConnectionException;
 
         /**
          * Notification that the user has clicked on the album art
-         *
-         * @param context
-         * @throws NoConnectionException
-         * @throws TransientNetworkDisconnectionException
          */
         public void onTargetActivityInvoked(Context context)
                 throws TransientNetworkDisconnectionException, NoConnectionException;
