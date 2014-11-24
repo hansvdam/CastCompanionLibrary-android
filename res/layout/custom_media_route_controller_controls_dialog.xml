@@ -128,6 +128,30 @@
                 android:layout_centerVertical="true"
                 android:visibility="gone" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_media_route_controller_controls_skip_text"
+                android:id="@+id/textRewind"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/playRewindView"
+                android:layout_alignEnd="@+id/playRewindView"
+                android:layout_alignRight="@+id/playRewindView"
+                android:layout_alignLeft="@+id/playRewindView"
+                android:layout_alignStart="@+id/playRewindView"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_media_route_controller_controls_skip_text"
+                android:id="@+id/textForward"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/playForwardView"
+                android:layout_alignEnd="@+id/playForwardView"
+                android:layout_alignRight="@+id/playForwardView"
+                android:layout_alignLeft="@+id/playForwardView"
+                android:layout_alignStart="@+id/playForwardView" />
+
         </RelativeLayout>
 
     </LinearLayout>

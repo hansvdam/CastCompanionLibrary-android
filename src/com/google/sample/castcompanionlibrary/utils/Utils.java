@@ -16,8 +16,6 @@
 
 package com.google.sample.castcompanionlibrary.utils;
 
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
-
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaTrack;
@@ -25,6 +23,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.images.WebImage;
 import com.google.sample.castcompanionlibrary.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,12 +47,12 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
  * A collection of utility methods, all static.
@@ -112,6 +114,12 @@ public class Utils {
         showToast(context.getApplicationContext(), resourceId);
     }
 
+    public static String stackTraceToString() {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        new Throwable().printStackTrace(pw);
+        return sw.toString();
+    }
     /**
      * A utility method to show a simple error dialog.
      *

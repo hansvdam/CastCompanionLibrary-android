@@ -128,7 +128,7 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     private RouteInfo mRouteInfo;
     private boolean mDestroyOnDisconnect = false;
 
-    protected BaseCastManager( Context context, String applicationId) {
+    protected BaseCastManager(Context context, String applicationId) {
         CCL_VERSION = context.getString(R.string.ccl_version);
         LOGD(TAG, "BaseCastManager is instantiated");
         mContext = context;
