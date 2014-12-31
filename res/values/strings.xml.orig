@@ -2,16 +2,26 @@
 <resources>
 
     <string name="app_name">Cast Companion Library</string>
-    <string name="ccl_version">1.12</string>
+<<<<<<< HEAD
+    <string name="ccl_version">1.11</string>
     <string name="media_route_menu_title">Afspelen op&#8230;</string>
     <string name="live">Live</string>
     <string name="cancel">Cancel</string>
     <string name="on">Aan</string>
     <string name="off">Uit</string>
     <string name="info_na">Informatie niet beschikbaar</string>
+=======
+    <string name="ccl_version">1.12</string>
+    <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="live">Live</string>
+    <string name="cancel">Cancel</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="info_na">Information Not Available</string>
     <string name="pause">Pause</string>
     <string name="disconnect">Disconnect</string>
     <string name="none">None</string>
+>>>>>>> upstream/master
 
     <!-- Used in Error Dialog -->
     <string name="ok">OK</string>
@@ -30,9 +40,15 @@
     <string name="session_reconnection_attempt">Poging tot herstel van vorige sessie&#8230;</string>
 
     <!-- onApplicationConnectionFailed() errors -->
+<<<<<<< HEAD
     <string name="failed_to_launch_app">Het is niet gelukt de applicatie te starten</string>
     <string name="failed_app_launch_timeout">Het duurt te lang om de applicatie te starten</string>
     <string name="failed_to_find_app">De applicatie is niet beschikbaar op jouw Chromecast</string>
+=======
+    <string name="failed_to_launch_app">Failed to launch application</string>
+    <string name="failed_app_launch_timeout">The request to launch the application has timed out!</string>
+    <string name="failed_to_find_app">The application you are trying to launch is not available on your Cast device</string>
+>>>>>>> upstream/master
 
     <!-- Error messages for the play.pause in mini player -->
     <string name="failed_to_play">Het is niet gelukt de video af te spelen</string>
@@ -41,6 +57,7 @@
     <string name="failed_unknown">Er is een onverwachte fout opgetreden</string>
 
     <!-- Failures -->
+<<<<<<< HEAD
     <string name="failed_to_connect">Het is niet gelukt om te verbinden met het apparaat</string>
     <string name="failed_setting_volume">Het is niet gelukt om het volume aan te passen</string>
     <string name="failed_no_connection">Er is geen verbinding naar het cast apparaat aanwezig</string>
@@ -56,3 +73,19 @@
     <string name="custom_media_route_controller_controls_skip_text">30 sec</string>
 
 </resources>
+=======
+    <string name="failed_to_connect">Could not connect to the device</string>
+    <string name="failed_setting_volume">Failed to set the volume</string>
+    <string name="failed_no_connection">No connection to the cast device is present</string>
+    <string name="failed_no_connection_short">No connection</string>
+    <string name="failed_no_connection_trans">Connection to the cast device has been lost. Application is trying to re-establish the connection, if possible. Please wait for a few seconds and try again.</string>
+    <string name="failed_perform_action">Failed to perform the action</string>
+    <string name="failed_status_request">Failed to sync up with the cast device</string>
+    <string name="failed_load">Failed to load media on the cast device</string>
+    <string name="failed_seek">Failed to seek to the new position on the cast device</string>
+    <string name="failed_receiver_player_error">Receiver player has encountered a severe error</string>
+    <string name="failed_authorization_timeout">Authorization timed out</string>
+    <string name="failed_to_set_track_style">Failed to update the Captions style.</string>
+
+</resources>
+>>>>>>> upstream/master

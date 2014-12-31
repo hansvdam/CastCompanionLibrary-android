@@ -16,14 +16,10 @@
 
 package com.google.sample.castcompanionlibrary.cast.reconnection;
 
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
-
 import com.google.sample.castcompanionlibrary.cast.BaseCastManager;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
-import com.google.sample.castcompanionlibrary.cast.exceptions
-        .TransientNetworkDisconnectionException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 import com.google.sample.castcompanionlibrary.cast.player.VideoCastControllerActivity;
 import com.google.sample.castcompanionlibrary.utils.LogUtils;
 import com.google.sample.castcompanionlibrary.utils.Utils;
@@ -40,6 +36,9 @@ import android.os.SystemClock;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
  * A service to run in the background when the playback of a media starts, to help with reconnection if needed. Due to
@@ -78,7 +77,7 @@ public class ReconnectionService extends Service {
         mCastManager = VideoCastManager
                 .initialize(this, mApplicationId, mTargetActivity, mDataNamespace);
         if (!mCastManager.isConnected() && !mCastManager.isConnecting()) {
-            mCastManager.reconnectSessionIfPossible(this, false);
+            mCastManager.reconnectSessionIfPossible();
         }
 
         // register a broadcast receiver to be notified when screen goes on or off
@@ -127,7 +126,7 @@ public class ReconnectionService extends Service {
             mWifiConnectivity = true;
             if (mCastManager.isFeatureEnabled(BaseCastManager.FEATURE_WIFI_RECONNECT)) {
                 mCastManager.startCastDiscovery();
-                mCastManager.reconnectSessionIfPossible(this, false, RECONNECTION_ATTEMPT_PERIOD_S,
+                mCastManager.reconnectSessionIfPossible(RECONNECTION_ATTEMPT_PERIOD_S,
                         networkSsid);
             }
 
@@ -224,7 +223,7 @@ public class ReconnectionService extends Service {
             stopSelf();
         } else {
             // since we are connected and our timer has gone off, lets update the time remaining
-            // on the media (since media may have been paused) and reset teh time left
+            // on the media (since media may have been paused) and reset the time left
             long timeLeft = 0;
             try {
                 timeLeft = mCastManager.isRemoteStreamLive() ? 0 :

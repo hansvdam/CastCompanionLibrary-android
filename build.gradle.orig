@@ -30,13 +30,15 @@ android {
             res.srcDirs = ['res']
         }
     }
+<<<<<<< .merge_file_GhHWDE
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
-    }
+=======
 
     lintOptions {
         abortOnError false
+>>>>>>> .merge_file_J9rJaw
     }
 }
 

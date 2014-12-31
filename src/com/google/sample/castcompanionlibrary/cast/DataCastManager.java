@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All Rights Reserved.
+ * Copyright (C) 2014 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,31 +41,40 @@ import android.support.v7.media.MediaRouter.RouteInfo;
 import android.text.TextUtils;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * A concrete subclass of {@link BaseCastManager} that is suitable for data-centric applications that use multiple
- * namespaces. <p> This is a singleton that needs to be "initialized" (by calling <code>initialize()</code>) prior to
- * usage. Subsequent to initialization, an easier way to get access to the singleton class is to call a variant of
- * <code>getInstance()</code>. After initialization, callers can enable any available feature (all features are off by
- * default). To do so, call <code>enableFeature()</code> and pass an OR-ed expression built from one ore more of the
- * following constants: <p> <ul> <li>FEATURE_DEBUGGING: to enable GMS level logging</li> </ul> Beyond managing the
- * connectivity to a cast device, this class provides easy-to-use methods to send and receive messages using one or more
- * namespaces. These namespaces can be configured during the initialization as part of the call to
- * <code>initialize()</code> or can be added later on. Clients can subclass this class to extend the features and
- * functionality beyond what this class provides. This class manages various states of the remote cast device. Client
- * applications, however, can complement the default behavior of this class by hooking into various callbacks that it
- * provides (see {@link IDataCastConsumer}). Since the number of these callbacks is usually much larger than what a
- * single application might be interested in, there is a no-op implementation of this interface (see {@link
- * DataCastConsumerImpl}) that applications can subclass to override only those methods that they are interested in.
- * Since this library depends on the cast functionalities provided by the Google Play services, the library checks to
- * ensure that the right version of that service is installed. It also provides a simple static method
- * <code>checkGooglePlayServices()</code> that clients can call at an early stage of their applications to provide a
- * dialog for users if they need to update/activate their GMS library. To learn more about this library, please read the
- * documentation that is distributed as part of this library.
+ * A concrete subclass of {@link BaseCastManager} that is suitable for data-centric applications
+ * that use multiple namespaces.
+ * <p>
+ * This is a singleton that needs to be "initialized" (by calling <code>initialize()</code>) prior
+ * to usage. Subsequent to initialization, an easier way to get access to the singleton class is to
+ * call a variant of <code>getInstance()</code>. After initialization, callers can enable any
+ * available feature (all features are off by default). To do so, call <code>enableFeature()</code>
+ * and pass an OR-ed expression built from one ore more of the following constants:
+ * <p>
+ * <ul>
+ * <li>FEATURE_DEBUGGING: to enable GMS level logging</li>
+ * </ul>
+ * Beyond managing the connectivity to a cast device, this class provides easy-to-use methods to
+ * send and receive messages using one or more namespaces. These namespaces can be configured during
+ * the initialization as part of the call to <code>initialize()</code> or can be added later on.
+ * Clients can subclass this class to extend the features and functionality beyond what this class
+ * provides. This class manages various states of the remote cast device. Client applications,
+ * however, can complement the default behavior of this class by hooking into various callbacks that
+ * it provides (see {@link IDataCastConsumer}). Since the number of these callbacks is usually much
+ * larger than what a single application might be interested in, there is a no-op implementation of
+ * this interface (see {@link DataCastConsumerImpl}) that applications can subclass to override only
+ * those methods that they are interested in. Since this library depends on the cast functionalities
+ * provided by the Google Play services, the library checks to ensure that the right version of that
+ * service is installed. It also provides a simple static method
+ * <code>checkGooglePlayServices()</code> that clients can call at an early stage of their
+ * applications to provide a dialog for users if they need to update/activate their Google Play
+ * Services library. To learn more about this library, please read the documentation that is
+ * distributed as part of this library.
  */
 public class DataCastManager extends BaseCastManager
         implements Cast.MessageReceivedCallback {
@@ -73,26 +82,19 @@ public class DataCastManager extends BaseCastManager
     private static final String TAG = LogUtils.makeLogTag(DataCastManager.class);
     private static DataCastManager sInstance;
     private final Set<String> mNamespaceList = new HashSet<String>();
-    private Set<IDataCastConsumer> mDataConsumers;
-
-    protected DataCastManager(Context context, String applicationId, String... namespaces) {
-        super(context, applicationId);
-        mDataConsumers = Collections.synchronizedSet(new HashSet<IDataCastConsumer>());
-        if (null != namespaces) {
-            for (String namespace : namespaces) {
-                mNamespaceList.add(namespace);
-            }
-        }
-    }
+    private final Set<IDataCastConsumer> mDataConsumers =
+            new CopyOnWriteArraySet<IDataCastConsumer>();
 
     /**
-     * Initializes the DataCastManager for clients. Before clients can use DataCastManager, they need to initialize it
-     * by calling this static method. Then clients can obtain an instance of this singleton class by calling {@link
-     * DataCastManager#getInstance()}. Failing to initialize this class before requesting an instance will result in a
-     * {@link CastException} exception.
+     * Initializes the DataCastManager for clients. Before clients can use DataCastManager, they
+     * need to initialize it by calling this static method. Then clients can obtain an instance of
+     * this singleton class by calling {@link DataCastManager#getInstance()}. Failing to initialize
+     * this class before requesting an instance will result in a {@link CastException} exception.
      *
+     * @param context
      * @param applicationId the unique ID for your application
-     * @param namespaces    to be set up for this class.
+     * @param namespaces to be set up for this class.
+     * @return
      */
     public static DataCastManager initialize(Context context,
             String applicationId, String... namespaces) {
@@ -110,11 +112,22 @@ public class DataCastManager extends BaseCastManager
         return sInstance;
     }
 
+    protected DataCastManager(Context context, String applicationId, String... namespaces) {
+        super(context, applicationId);
+        if (null != namespaces) {
+            for (String namespace : namespaces) {
+                mNamespaceList.add(namespace);
+            }
+        }
+    }
+
     /**
-     * Returns the initialized instance of this class. If it is not initialized yet, a {@link CastException} will be
-     * thrown.
+     * Returns the initialized instance of this class. If it is not initialized yet, a
+     * {@link CastException} will be thrown.
      *
      * @see initialze()
+     * @return
+     * @throws CastException
      */
     public static DataCastManager getInstance() throws CastException {
         if (null == sInstance) {
@@ -126,34 +139,17 @@ public class DataCastManager extends BaseCastManager
     }
 
     /**
-     * Returns the initialized instance of this class. If it is not initialized yet, a {@link CastException} will be
-     * thrown. The {@link Context} that is passed as the argument will be used to update the context. The main purpose
-     * of updating context is to enable the library to provide {@link Context} related functionalities, e.g. it can
-     * create an error dialog if needed. This method is preferred over the similar one without a context argument.
-     *
-     * @param ctx the current Context
-     * @see {@link initialize()}, {@link setContext()}
-     */
-    public static DataCastManager getInstance(Context ctx) throws CastException {
-        if (null == sInstance) {
-            LOGE(TAG, "No DataCastManager instance was initialized, you need to " +
-                    "call initialize() first");
-            throw new CastException();
-        }
-        LOGD(TAG, "Updated context to: " + ctx.getClass().getName());
-        sInstance.mContext = ctx;
-        return sInstance;
-    }
-
-    /**
-     * Adds a channel with the given <code>namespace</code> and registers {@link DataCastManager} as the callback
-     * receiver. If the namespace is already registered, this returns <code>false</code>, otherwise returns <code>true
+     * Adds a channel with the given <code>namespace</code> and registers {@link DataCastManager} as
+     * the callback receiver. If the namespace is already registered, this returns
+     * <code>false</code>, otherwise returns <code>true
      * </code>.
      *
-     * @throws NoConnectionException                  If no connectivity to the device exists
-     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a possibly transient
-     *                                                loss of network
-     * @throws IllegalArgumentException               If namespace is null or empty
+     * @param namespace
+     * @return
+     * @throws NoConnectionException If no connectivity to the device exists
+     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a
+     *             possibly transient loss of network
+     * @throws IllegalArgumentException If namespace is null or empty
      */
     public boolean addNamespace(String namespace) throws IllegalStateException, IOException,
             TransientNetworkDisconnectionException, NoConnectionException {
@@ -178,13 +174,16 @@ public class DataCastManager extends BaseCastManager
     }
 
     /**
-     * Unregisters a namespace. If namespace is not already registered, it returns <code>false</code>, otherwise a
-     * successful removal returns <code>true </code>.
+     * Unregisters a namespace. If namespace is not already registered, it returns
+     * <code>false</code>, otherwise a successful removal returns <code>true
+     * </code>.
      *
-     * @throws NoConnectionException                  If no connectivity to the device exists
-     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a possibly transient
-     *                                                loss of network
-     * @throws IllegalArgumentException               If namespace is null or empty
+     * @param namespace
+     * @return
+     * @throws NoConnectionException If no connectivity to the device exists
+     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a
+     *             possibly transient loss of network
+     * @throws IllegalArgumentException If namespace is null or empty
      */
     public boolean removeNamespace(String namespace) throws TransientNetworkDisconnectionException,
             NoConnectionException {
@@ -210,15 +209,18 @@ public class DataCastManager extends BaseCastManager
     }
 
     /**
-     * Sends the <code>message</code> on the data channel for the <code>namespace</code>. If fails, it will call
-     * <code>onMessageSendFailed</code>
+     * Sends the <code>message</code> on the data channel for the <code>namespace</code>. If fails,
+     * it will call <code>onMessageSendFailed</code>
      *
-     * @throws NoConnectionException                  If no connectivity to the device exists
-     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a possibly transient
-     *                                                loss of network
-     * @throws IllegalArgumentException               If the the message is null, empty, or too long; or if the
-     *                                                namespace is null or too long.
-     * @throws IllegalStateException                  If there is no active service connection.
+     * @param message
+     * @param namespace
+     * @throws NoConnectionException If no connectivity to the device exists
+     * @throws TransientNetworkDisconnectionException If framework is still trying to recover from a
+     *             possibly transient loss of network
+     * @throws IllegalArgumentException If the the message is null, empty, or too long; or if the
+     *             namespace is null or too long.
+     * @throws IllegalStateException If there is no active service connection.
+     * @throws IOException
      */
     public void sendDataMessage(String message, String namespace)
             throws IllegalArgumentException, IllegalStateException, IOException,
@@ -241,9 +243,7 @@ public class DataCastManager extends BaseCastManager
 
     /*************************************************************************/
     /************** BaseCastManager methods **********************************/
-    /**
-     * *********************************************************************
-     */
+    /*************************************************************************/
 
     @Override
     protected void onDeviceUnselected() {
@@ -261,14 +261,35 @@ public class DataCastManager extends BaseCastManager
         return builder;
     }
 
+    class CastListener extends Cast.Listener {
+
+        /*
+         * (non-Javadoc)
+         * @see com.google.android.gms.cast.Cast.Listener#onApplicationDisconnected (int)
+         */
+        @Override
+        public void onApplicationDisconnected(int statusCode) {
+            DataCastManager.this.onApplicationDisconnected(statusCode);
+        }
+
+        /*
+         * (non-Javadoc)
+         * @see com.google.android.gms.cast.Cast.Listener#onApplicationStatusChanged ()
+         */
+        @Override
+        public void onApplicationStatusChanged() {
+            DataCastManager.this.onApplicationStatusChanged();
+        }
+    }
+
     @Override
     protected MediaRouteDialogFactory getMediaRouteDialogFactory() {
         return null;
     }
 
-    /**
-     * *********************************************************************
-     */
+    /*************************************************************************/
+    /************** Cast.Listener callbacks **********************************/
+    /*************************************************************************/
 
     @Override
     public void onApplicationConnected(ApplicationMetadata appMetadata, String applicationStatus,
@@ -308,14 +329,12 @@ public class DataCastManager extends BaseCastManager
         try {
             attachDataChannels();
             mSessionId = sessionId;
-            synchronized (mDataConsumers) {
-                for (IDataCastConsumer consumer : mDataConsumers) {
-                    try {
-                        consumer.onApplicationConnected(appMetadata, applicationStatus, sessionId,
-                                wasLaunched);
-                    } catch (Exception e) {
-                        LOGE(TAG, "onApplicationConnected(): Failed to inform " + consumer, e);
-                    }
+            for (IDataCastConsumer consumer : mDataConsumers) {
+                try {
+                    consumer.onApplicationConnected(appMetadata, applicationStatus, sessionId,
+                            wasLaunched);
+                } catch (Exception e) {
+                    LOGE(TAG, "onApplicationConnected(): Failed to inform " + consumer, e);
                 }
             }
         } catch (IllegalStateException e) {
@@ -329,11 +348,6 @@ public class DataCastManager extends BaseCastManager
         }
 
     }
-
-    /*************************************************************************/
-    /**
-     * *********** Cast.Listener callbacks *********************************
-     */
 
     /*
      * Adds namespaces for data channel(s)
@@ -375,25 +389,21 @@ public class DataCastManager extends BaseCastManager
     @Override
     public void onApplicationConnectionFailed(int errorCode) {
         onDeviceSelected(null);
-        synchronized (mDataConsumers) {
-            for (IDataCastConsumer consumer : mDataConsumers) {
-                try {
-                    consumer.onApplicationConnectionFailed(errorCode);
-                } catch (Exception e) {
-                    LOGE(TAG, "onApplicationConnectionFailed(): Failed to inform " + consumer, e);
-                }
+        for (IDataCastConsumer consumer : mDataConsumers) {
+            try {
+                consumer.onApplicationConnectionFailed(errorCode);
+            } catch (Exception e) {
+                LOGE(TAG, "onApplicationConnectionFailed(): Failed to inform " + consumer, e);
             }
         }
     }
 
     public void onApplicationDisconnected(int errorCode) {
-        synchronized (mDataConsumers) {
-            for (IDataCastConsumer consumer : mDataConsumers) {
-                try {
-                    consumer.onApplicationDisconnected(errorCode);
-                } catch (Exception e) {
-                    LOGE(TAG, "onApplicationDisconnected(): Failed to inform " + consumer, e);
-                }
+        for (IDataCastConsumer consumer : mDataConsumers) {
+            try {
+                consumer.onApplicationDisconnected(errorCode);
+            } catch (Exception e) {
+                LOGE(TAG, "onApplicationDisconnected(): Failed to inform " + consumer, e);
             }
         }
         if (null != mMediaRouter) {
@@ -412,13 +422,11 @@ public class DataCastManager extends BaseCastManager
             appStatus = Cast.CastApi.getApplicationStatus(mApiClient);
             LOGD(TAG, "onApplicationStatusChanged() reached: "
                     + Cast.CastApi.getApplicationStatus(mApiClient));
-            synchronized (mDataConsumers) {
-                for (IDataCastConsumer consumer : mDataConsumers) {
-                    try {
-                        consumer.onApplicationStatusChanged(appStatus);
-                    } catch (Exception e) {
-                        LOGE(TAG, "onApplicationStatusChanged(): Failed to inform " + consumer, e);
-                    }
+            for (IDataCastConsumer consumer : mDataConsumers) {
+                try {
+                    consumer.onApplicationStatusChanged(appStatus);
+                } catch (Exception e) {
+                    LOGE(TAG, "onApplicationStatusChanged(): Failed to inform " + consumer, e);
                 }
             }
         } catch (IllegalStateException e) {
@@ -429,13 +437,11 @@ public class DataCastManager extends BaseCastManager
 
     @Override
     public void onApplicationStopFailed(int errorCode) {
-        synchronized (mDataConsumers) {
-            for (IDataCastConsumer consumer : mDataConsumers) {
-                try {
-                    consumer.onApplicationStopFailed(errorCode);
-                } catch (Exception e) {
-                    LOGE(TAG, "onApplicationStopFailed(): Failed to inform " + consumer, e);
-                }
+        for (IDataCastConsumer consumer : mDataConsumers) {
+            try {
+                consumer.onApplicationStopFailed(errorCode);
+            } catch (Exception e) {
+                LOGE(TAG, "onApplicationStopFailed(): Failed to inform " + consumer, e);
             }
         }
     }
@@ -444,53 +450,47 @@ public class DataCastManager extends BaseCastManager
         // nothing relevant to data
     }
 
-    /**
-     * *********************************************************************
-     */
+    /*************************************************************************/
+    /************** MessageReceivedCallbacks callbacks ***********************/
+    /*************************************************************************/
 
     @Override
     public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
-        synchronized (mDataConsumers) {
-            for (IDataCastConsumer consumer : mDataConsumers) {
-                try {
-                    consumer.onMessageReceived(castDevice, namespace, message);
-                } catch (Exception e) {
-                    LOGE(TAG, "onMessageReceived(): Failed to inform " + consumer, e);
-                }
+        for (IDataCastConsumer consumer : mDataConsumers) {
+            try {
+                consumer.onMessageReceived(castDevice, namespace, message);
+            } catch (Exception e) {
+                LOGE(TAG, "onMessageReceived(): Failed to inform " + consumer, e);
             }
         }
     }
-
-    /*************************************************************************/
-    /**
-     * *********** MessageReceivedCallbacks callbacks **********************
-     */
 
     public void onMessageSendFailed(Status result) {
-        synchronized (mDataConsumers) {
-            for (IDataCastConsumer consumer : mDataConsumers) {
-                try {
-                    consumer.onMessageSendFailed(result);
-                } catch (Exception e) {
-                    LOGE(TAG, "onMessageSendFailed(): Failed to inform " + consumer, e);
-                }
+        for (IDataCastConsumer consumer : mDataConsumers) {
+            try {
+                consumer.onMessageSendFailed(result);
+            } catch (Exception e) {
+                LOGE(TAG, "onMessageSendFailed(): Failed to inform " + consumer, e);
             }
         }
     }
 
+    /*************************************************************/
+    /***** Registering IDataCastConsumer listeners ***************/
+    /*************************************************************/
     /**
-     * Registers an {@link IDataCastConsumer} interface with this class. Registered listeners will be notified of
-     * changes to a variety of lifecycle and status changes through the callbacks that the interface provides.
+     * Registers an {@link IDataCastConsumer} interface with this class. Registered listeners will
+     * be notified of changes to a variety of lifecycle and status changes through the callbacks
+     * that the interface provides.
      *
      * @see DataCastConsumerImpl
+     * @param listener
      */
     public void addDataCastConsumer(IDataCastConsumer listener) {
         if (null != listener) {
             super.addBaseCastConsumer(listener);
             boolean result = false;
-            synchronized (mDataConsumers) {
-                result = mDataConsumers.add(listener);
-            }
+            result = mDataConsumers.add(listener);
             if (result) {
                 LOGD(TAG, "Successfully added the new DataCastConsumer listener " + listener);
             } else {
@@ -500,40 +500,15 @@ public class DataCastManager extends BaseCastManager
         }
     }
 
-    /*************************************************************/
-    /***** Registering IDataCastConsumer listeners ***************/
-    /*************************************************************/
-
     /**
      * Unregisters an {@link IDataCastConsumer}.
+     *
+     * @param listener
      */
     public void removeDataCastConsumer(IDataCastConsumer listener) {
         if (null != listener) {
             super.removeBaseCastConsumer(listener);
-            synchronized (mDataConsumers) {
-                mDataConsumers.remove(listener);
-            }
-        }
-    }
-
-    class CastListener extends Cast.Listener {
-
-        /*
-         * (non-Javadoc)
-         * @see com.google.android.gms.cast.Cast.Listener#onApplicationDisconnected (int)
-         */
-        @Override
-        public void onApplicationDisconnected(int statusCode) {
-            DataCastManager.this.onApplicationDisconnected(statusCode);
-        }
-
-        /*
-         * (non-Javadoc)
-         * @see com.google.android.gms.cast.Cast.Listener#onApplicationStatusChanged ()
-         */
-        @Override
-        public void onApplicationStatusChanged() {
-            DataCastManager.this.onApplicationStatusChanged();
+            mDataConsumers.remove(listener);
         }
     }
 
