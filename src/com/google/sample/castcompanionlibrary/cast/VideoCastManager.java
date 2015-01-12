@@ -16,9 +16,6 @@
 
 package com.google.sample.castcompanionlibrary.cast;
 
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
-
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.Cast.CastOptions.Builder;
@@ -60,6 +57,8 @@ import com.google.sample.castcompanionlibrary.widgets.IMiniController;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
 import com.google.sample.castcompanionlibrary.widgets.MiniController.OnMiniControllerChangedListener;
 
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -90,7 +89,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.json.JSONObject;
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
  * A concrete subclass of {@link BaseCastManager} that is suitable for casting video contents (it
