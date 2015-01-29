@@ -119,7 +119,7 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
     protected CastDevice mSelectedCastDevice;
     protected String mDeviceName;
     private final Set<IBaseCastConsumer> mBaseCastConsumers =
-            new CopyOnWriteArraySet<IBaseCastConsumer>();
+            new CopyOnWriteArraySet<>();
     private boolean mDestroyOnDisconnect = false;
     protected String mApplicationId;
     protected Handler mHandler;

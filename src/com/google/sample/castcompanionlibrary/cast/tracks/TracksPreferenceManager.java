@@ -50,9 +50,9 @@ public class TracksPreferenceManager implements SharedPreferences.OnSharedPrefer
     public static final String FONT_FAMILY_SANS_SERIF = "FONT_FAMILY_SANS_SERIF";
     public static final String EDGE_TYPE_DEFAULT = "EDGE_TYPE_NONE";
     private static final String TAG = LogUtils.makeLogTag(TracksPreferenceManager.class);
-    private static Map<String, String> OPACITY_MAPPING = new HashMap<String, String>();
-    private static Map<String, Integer> FONT_FAMILY_MAPPING = new HashMap<String, Integer>();
-    private static Map<String, Integer> EDGE_TYPE_MAPPING = new HashMap<String, Integer>();
+    private static Map<String, String> OPACITY_MAPPING = new HashMap<>();
+    private static Map<String, Integer> FONT_FAMILY_MAPPING = new HashMap<>();
+    private static Map<String, Integer> EDGE_TYPE_MAPPING = new HashMap<>();
     private final Context mContext;
     private final SharedPreferences mSharedPreferences;
     private ListPreference mCaptionFontScaleListPreference;

@@ -388,7 +388,7 @@ public class VideoCastNotificationService extends Service {
                 .addAction(R.drawable.ic_clear_white_24dp, getString(R.string.disconnect),
                         stopPendingIntent)
                 .setStyle(new Notification.MediaStyle()
-                        .setShowActionsInCompactView(new int[]{0, 1}))
+                        .setShowActionsInCompactView(0, 1))
                 .setOngoing(true)
                 .setShowWhen(false)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)

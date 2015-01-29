@@ -24,7 +24,7 @@
     <string name="loading">Laden...&#8230;</string>
 
     <!-- Used in Router Controller Dialog -->
-    <string name="no_media_info">Geen mediainformatie beschikbare</string>
+    <string name="no_media_info">Geen mediainformatie beschikbaar</string>
 
     <!-- Session Recovery Dialog message -->
     <string name="session_reconnection_attempt">Poging tot herstel van vorige sessie&#8230;</string>

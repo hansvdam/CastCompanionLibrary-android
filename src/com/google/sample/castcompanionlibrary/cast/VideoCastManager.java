@@ -158,9 +158,9 @@ public class VideoCastManager extends BaseCastManager
     private final String mDataNamespace;
     private Cast.MessageReceivedCallback mDataChannel;
     private final Set<IVideoCastConsumer> mVideoConsumers =
-            new CopyOnWriteArraySet<IVideoCastConsumer>();
+            new CopyOnWriteArraySet<>();
     private final Set<OnTracksSelectedListener> mTracksSelectedListeners =
-            new CopyOnWriteArraySet<OnTracksSelectedListener>();
+            new CopyOnWriteArraySet<>();
     private IMediaAuthService mAuthService;
     private long mLiveStreamDuration = DEFAULT_LIVE_STREAM_DURATION_MS;
     private TracksPreferenceManager mTrackManager;
@@ -2151,9 +2151,7 @@ public class VideoCastManager extends BaseCastManager
      */
     public void onTextTrackEnabledChanged(boolean isEnabled) {
         LOGD(TAG, "onTextTrackEnabledChanged() reached");
-        if (isEnabled) {
-
-        } else {
+        if (!isEnabled) {
             setActiveTrackIds(new long[]{});
         }
 

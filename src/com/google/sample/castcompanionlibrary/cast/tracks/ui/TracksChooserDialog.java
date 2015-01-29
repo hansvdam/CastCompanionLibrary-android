@@ -50,8 +50,8 @@ public class TracksChooserDialog extends DialogFragment {
     private MediaInfo mMediaInfo;
     private TracksListAdapter mTextAdapter;
     private TracksListAdapter mAudioVideoAdapter;
-    private List<MediaTrack> mTextTracks = new ArrayList<MediaTrack>();
-    private List<MediaTrack> mAudioTracks = new ArrayList<MediaTrack>();
+    private List<MediaTrack> mTextTracks = new ArrayList<>();
+    private List<MediaTrack> mAudioTracks = new ArrayList<>();
     private static final long TEXT_TRACK_NONE_ID = -1;
     private int mSelectedTextPosition = 0;
     private int mSelectedAudioPosition = -1;
@@ -67,7 +67,7 @@ public class TracksChooserDialog extends DialogFragment {
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        List<MediaTrack> selectedTracks = new ArrayList<MediaTrack>();
+                        List<MediaTrack> selectedTracks = new ArrayList<>();
                         MediaTrack textTrack = mTextAdapter.getSelectedTrack();
                         if (textTrack.getId() != TEXT_TRACK_NONE_ID) {
                             selectedTracks.add(textTrack);

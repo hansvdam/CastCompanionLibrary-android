@@ -45,7 +45,7 @@ public class TracksListAdapter extends ArrayAdapter<MediaTrack>
             int activePosition) {
         super(context, resource);
         this.mContext = context;
-        mTracks = new ArrayList<MediaTrack>();
+        mTracks = new ArrayList<>();
         mTracks.addAll(tracks);
         mSelectedPosition = activePosition;
     }

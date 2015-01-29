@@ -16,9 +16,6 @@
 
 package com.google.sample.castcompanionlibrary.cast;
 
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
-
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.Cast.CastOptions.Builder;
@@ -41,10 +38,14 @@ import android.support.v7.media.MediaRouter.RouteInfo;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGD;
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
  * A concrete subclass of {@link BaseCastManager} that is suitable for data-centric applications
@@ -81,9 +82,9 @@ public class DataCastManager extends BaseCastManager
 
     private static final String TAG = LogUtils.makeLogTag(DataCastManager.class);
     private static DataCastManager sInstance;
-    private final Set<String> mNamespaceList = new HashSet<String>();
+    private final Set<String> mNamespaceList = new HashSet<>();
     private final Set<IDataCastConsumer> mDataConsumers =
-            new CopyOnWriteArraySet<IDataCastConsumer>();
+            new CopyOnWriteArraySet<>();
 
     /**
      * Initializes the DataCastManager for clients. Before clients can use DataCastManager, they
@@ -115,9 +116,7 @@ public class DataCastManager extends BaseCastManager
     protected DataCastManager(Context context, String applicationId, String... namespaces) {
         super(context, applicationId);
         if (null != namespaces) {
-            for (String namespace : namespaces) {
-                mNamespaceList.add(namespace);
-            }
+            Collections.addAll(mNamespaceList, namespaces);
         }
     }
 

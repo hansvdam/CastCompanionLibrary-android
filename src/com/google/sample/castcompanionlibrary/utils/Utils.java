@@ -345,7 +345,7 @@ public class Utils {
         wrapper.putInt(KEY_STREAM_TYPE, info.getStreamType());
         wrapper.putLong(KEY_STREAM_DURATION, info.getStreamDuration());
         if (!md.getImages().isEmpty()) {
-            ArrayList<String> urls = new ArrayList<String>();
+            ArrayList<String> urls = new ArrayList<>();
             for (WebImage img : md.getImages()) {
                 urls.add(img.getUrl().toString());
             }
@@ -420,7 +420,7 @@ public class Utils {
         if (wrapper.getString(KEY_TRACKS_DATA) != null) {
             try {
                 JSONArray jsonArray = new JSONArray(wrapper.getString(KEY_TRACKS_DATA));
-                mediaTracks = new ArrayList<MediaTrack>();
+                mediaTracks = new ArrayList<>();
                 if (jsonArray != null && jsonArray.length() > 0) {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObj = (JSONObject) jsonArray.get(i);
