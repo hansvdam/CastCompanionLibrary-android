@@ -2,8 +2,13 @@
 <resources>
 
     <string name="app_name">Cast Companion Library</string>
-    <string name="ccl_version">1.14</string>
+<<<<<<< HEAD
+    <string name="ccl_version">1.12</string>
     <string name="media_route_menu_title">Afspelen op&#8230;</string>
+=======
+    <string name="ccl_version">1.14</string>
+    <string name="media_route_menu_title">Play on&#8230;</string>
+>>>>>>> 3cb31c9575a3037d82b58f1b87b9a52a908c7ff8
     <string name="live">Live</string>
     <string name="cancel">Cancel</string>
     <string name="on">Aan</string>

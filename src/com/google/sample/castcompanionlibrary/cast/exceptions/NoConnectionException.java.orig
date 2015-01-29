@@ -23,6 +23,8 @@ package com.google.sample.castcompanionlibrary.cast.exceptions;
 @SuppressWarnings("serial")
 public class NoConnectionException extends Exception {
 
+<<<<<<< HEAD
+=======
     public NoConnectionException() {
         super();
     }
@@ -34,4 +36,5 @@ public class NoConnectionException extends Exception {
     public NoConnectionException(String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
     }
+>>>>>>> 3cb31c9575a3037d82b58f1b87b9a52a908c7ff8
 }

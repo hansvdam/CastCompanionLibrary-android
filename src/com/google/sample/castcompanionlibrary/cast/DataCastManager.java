@@ -58,7 +58,7 @@ import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
  * and pass an OR-ed expression built from one ore more of the following constants:
  * <p>
  * <ul>
- * <li>FEATURE_DEBUGGING: to enable GMS level logging</li>
+ * <li>FEATURE_DEBUGGING: to enable Google Play Services level logging</li>
  * </ul>
  * Beyond managing the connectivity to a cast device, this class provides easy-to-use methods to
  * send and receive messages using one or more namespaces. These namespaces can be configured during
@@ -164,10 +164,8 @@ public class DataCastManager extends BaseCastManager
             Cast.CastApi.setMessageReceivedCallbacks(mApiClient, namespace, this);
             mNamespaceList.add(namespace);
             return true;
-        } catch (IOException e) {
-            LOGE(TAG, "Failed to add namespace", e);
-        } catch (IllegalStateException e) {
-            LOGE(TAG, "Failed to add namespace", e);
+        } catch (IOException | IllegalStateException e) {
+            LOGE(TAG, String.format("addNamespace(%s)", namespace), e);
         }
         return false;
     }
@@ -198,10 +196,8 @@ public class DataCastManager extends BaseCastManager
             Cast.CastApi.removeMessageReceivedCallbacks(mApiClient, namespace);
             mNamespaceList.remove(namespace);
             return true;
-        } catch (IOException e) {
-            LOGE(TAG, "Failed to remove namespace: " + namespace, e);
-        } catch (IllegalStateException e) {
-            LOGE(TAG, "Failed to remove namespace: " + namespace, e);
+        } catch (IOException | IllegalStateException e) {
+            LOGE(TAG, String.format("removeNamespace(%s)", namespace), e);
         }
         return false;
 
@@ -378,8 +374,8 @@ public class DataCastManager extends BaseCastManager
             for (String namespace : mNamespaceList) {
                 try {
                     Cast.CastApi.removeMessageReceivedCallbacks(mApiClient, namespace);
-                } catch (Exception e) {
-                    LOGE(TAG, "Failed to add namespace: " + namespace, e);
+                } catch (IOException | IllegalStateException e) {
+                    LOGE(TAG, String.format("detachDataChannels(%s)", namespace), e);
                 }
             }
         }
