@@ -86,4 +86,6 @@ public interface IBaseCastConsumer extends OnFailedListener {
      * Called when a device is selected/unselected.
      */
     public void onDeviceSelected(CastDevice device);
+
+    void onRouteInfoSet();
 }

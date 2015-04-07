@@ -77,6 +77,7 @@ import android.preference.PreferenceScreen;
 import android.support.v7.app.MediaRouteDialogFactory;
 import android.support.v7.media.MediaRouter.RouteInfo;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
@@ -1487,6 +1488,7 @@ public class VideoCastManager extends BaseCastManager
      */
     public void sendDataMessage(String message) throws TransientNetworkDisconnectionException,
             NoConnectionException {
+        Log.d(TAG, "Send message: " + message);
         if (TextUtils.isEmpty(mDataNamespace)) {
             throw new IllegalStateException("No Data Namespace is configured");
         }
@@ -1519,7 +1521,7 @@ public class VideoCastManager extends BaseCastManager
                 Cast.CastApi.removeMessageReceivedCallbacks(mApiClient, mDataNamespace);
             }
             mDataChannel = null;
-            Utils.saveStringToPreference(mContext, PREFS_KEY_CAST_CUSTOM_DATA_NAMESPACE, null);
+//            Utils.saveStringToPreference(mContext, PREFS_KEY_CAST_CUSTOM_DATA_NAMESPACE, null);
             return true;
         } catch (IOException | IllegalStateException e) {
             LOGE(TAG, String.format("removeDataChannel() Failed to remove namespace %s",

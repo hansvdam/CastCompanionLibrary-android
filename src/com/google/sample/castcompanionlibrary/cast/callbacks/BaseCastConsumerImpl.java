@@ -68,6 +68,10 @@ public class BaseCastConsumerImpl implements IBaseCastConsumer {
     }
 
     @Override
+    public void onRouteInfoSet() {
+    }
+
+    @Override
     public void onFailed(int resourceId, int statusCode) {
     }
 

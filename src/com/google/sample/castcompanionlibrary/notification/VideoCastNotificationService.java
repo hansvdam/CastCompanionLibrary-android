@@ -377,7 +377,7 @@ public class VideoCastNotificationService extends Service {
                 stackBuilder.getPendingIntent(NOTIFICATION_ID, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mNotification = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_stat_action_notification)
+                .setSmallIcon(R.drawable.nlziet_notification_icon)
                 .setContentTitle(mm.getString(MediaMetadata.KEY_TITLE))
                 .setContentText(castingTo)
                 .setContentIntent(contentPendingIntent)

@@ -538,6 +538,13 @@ public abstract class BaseCastManager implements DeviceSelectionListener, Connec
      */
     public final void setRouteInfo(RouteInfo routeInfo) {
         mRouteInfo = routeInfo;
+        for (IBaseCastConsumer consumer : mBaseCastConsumers) {
+            try {
+                consumer.onRouteInfoSet();
+            } catch (Exception e) {
+                LOGE(TAG, "onReconnectionStatusChanged(): Failed to inform " + consumer, e);
+            }
+        }
     }
 
     /**

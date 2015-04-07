@@ -89,12 +89,12 @@
         <RelativeLayout
             android:id="@+id/cast_dialog_controls_container"
             android:layout_width="match_parent"
-            android:layout_height="68dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/playPauseView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="68dp"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
                 android:paddingLeft="15dp"
@@ -106,7 +106,7 @@
             <ImageView
                 android:id="@+id/playForwardView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="68dp"
                 android:padding="20dp"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/playPauseView"
@@ -115,7 +115,7 @@
             <ImageView
                 android:id="@+id/playRewindView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="68dp"
                 android:padding="20dp"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/playPauseView"

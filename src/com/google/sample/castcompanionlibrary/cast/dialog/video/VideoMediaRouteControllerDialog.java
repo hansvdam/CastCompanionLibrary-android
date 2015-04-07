@@ -16,20 +16,6 @@
 
 package com.google.sample.castcompanionlibrary.cast.dialog.video;
 
-import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
-
-import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
-import com.google.android.gms.cast.MediaStatus;
-import com.google.sample.castcompanionlibrary.R;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
-import com.google.sample.castcompanionlibrary.cast.exceptions.CastException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
-import com.google.sample.castcompanionlibrary.utils.FetchBitmapTask;
-import com.google.sample.castcompanionlibrary.utils.LogUtils;
-
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
@@ -54,6 +40,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import static com.google.sample.castcompanionlibrary.utils.LogUtils.LOGE;
 
 /**
  * A custom {@link MediaRouteControllerDialog} that provides an album art, a play/pause button and the ability to take
@@ -176,8 +164,12 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
         mStreamType = info.getStreamType();
         hideControls(false, 0);
         MediaMetadata mm = info.getMetadata();
-        mTitle.setText(mm.getString(MediaMetadata.KEY_TITLE));
-        mSubTitle.setText(mm.getString(MediaMetadata.KEY_SUBTITLE));
+        String title = mm.getString(MediaMetadata.KEY_TITLE);
+        title = title!=null?title:mm.getString("programtitle");
+        mTitle.setText(title);
+        String subtitle = mm.getString(MediaMetadata.KEY_SUBTITLE);
+        subtitle = subtitle!=null?subtitle:mm.getString("episodetitle");
+        mSubTitle.setText(subtitle);
         setIcon(mm.hasImages() ? mm.getImages().get(0).getUrl() : null);
     }
 
